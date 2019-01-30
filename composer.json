@@ -1,0 +1,24 @@
+{
+  "name": "furqansiddiqui/cardano-php",
+  "type": "library",
+  "description": "Cardano-SL (ADA) PHP SDK",
+  "keywords": [
+    "cardano",
+    "cardano-sl",
+    "iohk",
+    "ada"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=7.2.0",
+    "furqansiddiqui/http-client": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "CardanoSL\\": [
+        "src"
+      ]
+    }
+  },
+  "minimum-stability": "dev"
+}
