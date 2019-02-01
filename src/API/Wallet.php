@@ -144,8 +144,8 @@ class Wallet
         }
 
         $payload = [
-            "new" => $newPassword,
-            "old" => $oldPassword
+            "new" => $encodedNewPassword,
+            "old" => $encodedOldPassword
         ];
 
         $req = $this->node->http()->put(sprintf('/api/v1/wallets/%s/password', $this->id), $payload);
