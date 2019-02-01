@@ -68,6 +68,19 @@ class Wallets
     }
 
     /**
+     * @param WalletsList $list
+     * @return Wallets
+     */
+    public function load(WalletsList $list): self
+    {
+        foreach ($list as $walletInfo) {
+            $this->walletInstances[$walletInfo->id] = $walletInfo;
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string $walletId
      * @param bool $forceInstanceRefresh
      * @return Wallet
