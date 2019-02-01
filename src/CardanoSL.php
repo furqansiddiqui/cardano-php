@@ -49,7 +49,7 @@ class CardanoSL
      * @return NodeInfo
      * @throws Exception\API_ResponseException
      */
-    public function nodeInfo()
+    public function nodeInfo(): NodeInfo
     {
         $res = $this->httpClient->get("/api/v1/node-info");
         return new NodeInfo($res);
