@@ -6,6 +6,7 @@ namespace CardanoSL\API;
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\API_Exception;
 use CardanoSL\Response\WalletInfo;
+use CardanoSL\Response\WalletsList;
 use CardanoSL\Validate;
 use furqansiddiqui\BIP39\BIP39;
 use furqansiddiqui\BIP39\Mnemonic;
@@ -37,6 +38,33 @@ class Wallets
     public function __debugInfo()
     {
         return ['Wallets API Instance'];
+    }
+
+    /**
+     * @param int $page
+     * @param int $perPage
+     * @param string|null $filterId
+     * @param string|null $filterBalance
+     * @param string $sortBy
+     * @return WalletsList
+     * @throws API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     */
+    public function list(int $page = 1, int $perPage = 50, ?string $filterId = null, ?string $filterBalance = null, string $sortBy = "created_at"): WalletsList
+    {
+        if (!in_array($sortBy, ["created_at", "balance"])) {
+            throw new API_Exception('Value for param "sortBy" must either be "created_at" or "balance"');
+        }
+
+        $payload = [
+            "page" => $page,
+            "per_page" => $perPage,
+            "id" => $filterId,
+            "balance" => $filterBalance,
+            "sort_by" => $sortBy
+        ];
+
+        return new WalletsList($this->node->http()->get("/api/v1/wallets", $payload));
     }
 
     /**
