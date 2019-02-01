@@ -24,6 +24,8 @@ class Wallet
     private $info;
     /** @var null|Mnemonic */
     private $mnemonic;
+    /** @var null|Accounts */
+    private $accounts;
 
     /** @var null|bool */
     private $_isDeleted;
@@ -160,6 +162,29 @@ class Wallet
     public function mnemonic(): ?Mnemonic
     {
         return $this->mnemonic;
+    }
+
+    /**
+     * @return Accounts
+     */
+    public function accounts(): Accounts
+    {
+        if ($this->accounts) {
+            return $this->accounts;
+        }
+
+        $this->accounts = new Accounts($this->node, $this);
+        return $this->accounts;
+    }
+
+    /**
+     * @param int $accountId
+     * @return Account
+     * @throws \CardanoSL\Exception\AccountException
+     */
+    public function account(int $accountId): Account
+    {
+        return $this->accounts->get($accountId);
     }
 
     /**

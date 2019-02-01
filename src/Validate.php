@@ -50,6 +50,21 @@ class Validate
     }
 
     /**
+     * @param $id
+     * @return bool
+     */
+    public static function AccountId($id): bool
+    {
+        if (!is_int($id)) {
+            return false;
+        } elseif ($id < CardanoSL::MIN_ACCOUNTS_ID || $id > CardanoSL::MIN_ACCOUNTS_ID) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @param $hash
      * @return bool
      */
