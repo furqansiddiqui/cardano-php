@@ -6,6 +6,7 @@ namespace CardanoSL\API;
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\WalletException;
 use CardanoSL\Response\WalletInfo;
+use CardanoSL\Validate;
 
 /**
  * Class Wallet
@@ -24,11 +25,20 @@ class Wallet
      * Wallet constructor.
      * @param CardanoSL $node
      * @param string $id
+     * @param WalletInfo|null $walletInfo
+     * @throws WalletException
      */
-    public function __construct(CardanoSL $node, string $id)
+    public function __construct(CardanoSL $node, string $id, ?WalletInfo $walletInfo = null)
     {
         $this->node = $node;
         $this->id = $id;
+
+        if ($walletInfo) {
+            $this->id = $walletInfo->id;
+            $this->info = $walletInfo;
+        }
+
+        self::isValidIdentifier($this->id);
     }
 
     /**
@@ -39,7 +49,12 @@ class Wallet
         return [sprintf('Cardano SL wallet "%s" API instance', $this->id)];
     }
 
-    public function info(bool $forceReload = false)
+    /**
+     * @param bool $forceReload
+     * @return WalletInfo
+     * @throws \CardanoSL\Exception\API_ResponseException
+     */
+    public function info(bool $forceReload = false): WalletInfo
     {
         if ($this->info && !$forceReload) {
             return $this->info;
@@ -47,7 +62,7 @@ class Wallet
 
         // Get wallet info
         $walletInfo = $this->node->http()->get(sprintf('/api/v1/wallets/%s', $this->id));
-        var_dump($walletInfo);
+        return new WalletInfo($walletInfo);
     }
 
     /**
@@ -56,7 +71,7 @@ class Wallet
      */
     public static function isValidIdentifier($walletId): void
     {
-        if (!is_string($walletId) || !preg_match('/^[a-ZA-Z0-9]{8,128}$/', $walletId)) {
+        if (!Validate::WalletIdentifier($walletId)) {
             throw new WalletException('Invalid wallet identifier');
         }
     }
