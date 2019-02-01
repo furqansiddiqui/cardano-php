@@ -21,9 +21,9 @@ printf "wallet:
     fallbacks: 7" > "${TMP_TOPOLOGY_YAML}"
 
 stack exec -- cardano-node                                  \
-    --tlscert ./scripts/tls-files/server.crt                \
-    --tlskey ./scripts/tls-files/server.key                 \
-    --tlsca ./scripts/tls-files/ca.crt                      \
+    --tlscert ./tls/server/server.crt                       \
+    --tlskey ./tls/server/server.key                        \
+    --tlsca ./tls/server/ca.crt                             \
     --topology "${TMP_TOPOLOGY_YAML}"                       \
     --log-config log-configs/connect-to-cluster.yaml        \
     --logs-prefix "logs/${CLUSTER}"                         \
