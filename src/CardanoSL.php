@@ -43,4 +43,9 @@ class CardanoSL
     {
         return $this->httpClient;
     }
+
+    public function nodeInfo()
+    {
+
+    }
 }
