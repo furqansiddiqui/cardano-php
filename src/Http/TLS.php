@@ -16,7 +16,7 @@ class TLS
     /** @var null|string */
     private $cert;
     /** @var null|string */
-    private $certPassword;
+    private $privateKey;
     /** @var null|string */
     private $ca;
 
@@ -37,14 +37,14 @@ class TLS
     }
 
     /**
-     * @param string $pem
-     * @param string|null $password
+     * @param string $cert
+     * @param string $privateKey
      * @return TLS
      */
-    public function certificate(string $pem, ?string $password = null): self
+    public function certificate(string $cert, string $privateKey): self
     {
-        $this->cert = $pem;
-        $this->certPassword = $password;
+        $this->cert = $cert;
+        $this->privateKey = $privateKey;
         return $this;
     }
 
@@ -78,7 +78,8 @@ class TLS
         $req->ssl()->verify($this->verify);
 
         if ($this->cert) {
-            $req->ssl()->certificate($this->cert, $this->certPassword);
+            $req->ssl()->certificate($this->cert);
+            $req->ssl()->privateKey($this->privateKey);
             if ($this->ca) {
                 $req->ssl()->ca($this->ca);
             }
