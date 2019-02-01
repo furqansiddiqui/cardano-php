@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CardanoSL\API;
 
+use CardanoSL\API\Wallets\Wallet;
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\API_Exception;
 use CardanoSL\Response\WalletInfo;

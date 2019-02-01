@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\API;
+namespace CardanoSL\API\Wallets;
 
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\API_ResponseException;
@@ -12,7 +12,7 @@ use furqansiddiqui\BIP39\Mnemonic;
 
 /**
  * Class Wallet
- * @package CardanoSL\API
+ * @package CardanoSL\API\Wallets
  */
 class Wallet
 {
