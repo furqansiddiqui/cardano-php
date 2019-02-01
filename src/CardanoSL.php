@@ -5,6 +5,7 @@ namespace CardanoSL;
 
 use CardanoSL\Http\AbstractHttpClient;
 use CardanoSL\Http\CardanoHttpAPI;
+use CardanoSL\Response\NodeInfo;
 
 /**
  * Class CardanoSL
@@ -44,9 +45,13 @@ class CardanoSL
         return $this->httpClient;
     }
 
+    /**
+     * @return NodeInfo
+     * @throws Exception\API_ResponseException
+     */
     public function nodeInfo()
     {
-        $nodeInfo = $this->httpClient->get("/api/v1/node-info");
-        var_dump($nodeInfo);
+        $res = $this->httpClient->get("/api/v1/node-info");
+        return new NodeInfo($res);
     }
 }
