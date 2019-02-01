@@ -118,6 +118,42 @@ class Wallet
     }
 
     /**
+     * @param string $newPassword
+     * @param string $oldPassword
+     * @param bool $hashPasswords
+     * @return WalletInfo
+     * @throws API_ResponseException
+     * @throws WalletException
+     */
+    public function changePassword(string $newPassword, string $oldPassword, bool $hashPasswords = true): WalletInfo
+    {
+        $encodedNewPassword = $hashPasswords ? hash("sha256", $newPassword) : $newPassword;
+        if (!Validate::Hash64($encodedNewPassword)) {
+            throw new WalletException('newPassword must be 32 byte hexadecimal string (64 hexits)');
+        }
+
+        $encodedOldPassword = "";
+        if ($oldPassword) { // If no password is passed, just send an empty string ""
+            if ($hashPasswords) {
+                $encodedOldPassword = hash("sha256", $oldPassword);
+            }
+
+            if (!Validate::Hash64($encodedOldPassword)) {
+                throw new WalletException('oldPassword must be 32 byte hexadecimal string (64 hexits)');
+            }
+        }
+
+        $payload = [
+            "new" => $newPassword,
+            "old" => $oldPassword
+        ];
+
+        $req = $this->node->http()->put(sprintf('/api/v1/wallets/%s/password', $this->id), $payload);
+        $this->info = new WalletInfo($req);
+        return $this->info;
+    }
+
+    /**
      * ONLY return Mnemonic object for instances result of create/restore operations
      * @return null|Mnemonic
      */
