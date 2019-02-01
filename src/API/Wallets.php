@@ -171,6 +171,6 @@ class Wallets
         // Create wallet
         $res = $this->node->http()->post("/api/v1/wallets", $payload);
         $walletInfo = new WalletInfo($res);
-        return new Wallet($this->node, $walletInfo->id, $walletInfo);
+        return new Wallet($this->node, $walletInfo->id, $walletInfo, $mnemonic);
     }
 }
