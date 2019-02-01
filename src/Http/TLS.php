@@ -75,9 +75,7 @@ class TLS
      */
     public function apply(Request $req): self
     {
-        if (!$this->verify) {
-            return $this;
-        }
+        $req->ssl()->verify($this->verify);
 
         if ($this->cert) {
             $req->ssl()->certificate($this->cert, $this->certPassword);

@@ -10,11 +10,11 @@ namespace CardanoSL\Http;
 abstract class AbstractHttpClient
 {
     /** @var string */
-    private $host;
+    protected $host;
     /** @var int */
-    private $port;
+    protected $port;
     /** @var null|TLS */
-    private $tls;
+    protected $tls;
 
     /**
      * AbstractHttpClient constructor.
@@ -52,7 +52,7 @@ abstract class AbstractHttpClient
      * @param string $endpoint
      * @return string
      */
-    private function url(string $endpoint = ""): string
+    protected function url(string $endpoint = ""): string
     {
         return sprintf(
             '%s://%s:%d/%s',
