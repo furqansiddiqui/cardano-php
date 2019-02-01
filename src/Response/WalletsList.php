@@ -10,7 +10,7 @@ use CardanoSL\Http\HttpJSONResponse;
  * Class WalletsList
  * @package CardanoSL\Response
  */
-class WalletsList implements \Iterator, \Countable
+class WalletsList implements \Iterator, \Countable, ResponseModelInterface
 {
     /** @var int */
     private $pos;
@@ -25,6 +25,7 @@ class WalletsList implements \Iterator, \Countable
      * WalletsList constructor.
      * @param HttpJSONResponse $res
      * @throws API_ResponseException
+     * @throws \CardanoSL\Exception\AmountException
      */
     public function __construct(HttpJSONResponse $res)
     {

@@ -10,7 +10,7 @@ use CardanoSL\Http\HttpJSONResponse;
  * Class AccountInfo
  * @package CardanoSL\Response
  */
-class AccountInfo
+class AccountInfo implements ResponseModelInterface
 {
 
     public function __construct($data)

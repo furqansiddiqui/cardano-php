@@ -6,6 +6,7 @@ namespace CardanoSL\API\Wallets;
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\AccountException;
 use CardanoSL\Response\AccountInfo;
+use CardanoSL\Response\AddressInfo;
 use CardanoSL\Validate;
 
 /**
@@ -42,6 +43,11 @@ class Account
         if ($preloadInfo) {
 
         }
+    }
+
+    public function createAddress(): AddressInfo
+    {
+
     }
 
     /**

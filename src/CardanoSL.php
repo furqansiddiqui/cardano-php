@@ -4,8 +4,11 @@ declare(strict_types=1);
 namespace CardanoSL;
 
 use CardanoSL\API\Wallets;
+use CardanoSL\Exception\AddressException;
 use CardanoSL\Http\AbstractHttpClient;
 use CardanoSL\Http\CardanoHttpAPI;
+use CardanoSL\Response\AddressesList;
+use CardanoSL\Response\AddressInfo;
 use CardanoSL\Response\NodeInfo;
 
 /**
@@ -88,6 +91,21 @@ class CardanoSL
 
         $this->_api_Wallets = new Wallets($this);
         return $this->_api_Wallets;
+    }
+
+    public function addresses(int $page = 1, int $perPage = 10): AddressesList
+    {
+
+    }
+
+    public function address(string $address): AddressInfo
+    {
+        if (!Validate::Address($address)) {
+            throw new AddressException('Invalid Cardano SL address');
+        }
+
+        $req = $this->httpClient->get(sprintf('/api/v1/addresses/%s', $address));
+        var_dump($req);
     }
 
     /**

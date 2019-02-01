@@ -13,6 +13,7 @@ use furqansiddiqui\BIP39\Mnemonic;
 /**
  * Class Wallet
  * @package CardanoSL\API\Wallets
+ * @property-read null|string $spendingPassword
  */
 class Wallet
 {
@@ -26,6 +27,8 @@ class Wallet
     private $mnemonic;
     /** @var null|Accounts */
     private $accounts;
+    /** @var null|string */
+    private $spendingPassword;
 
     /** @var null|bool */
     private $_isDeleted;
@@ -58,6 +61,21 @@ class Wallet
     public function __debugInfo()
     {
         return [sprintf('Cardano SL wallet "%s" API instance', $this->id)];
+    }
+
+    /**
+     * @param string $prop
+     * @return string|null
+     * @throws WalletException
+     */
+    public function __get(string $prop)
+    {
+        switch ($prop) {
+            case "spendingPassword":
+                return $this->spendingPassword;
+        }
+
+        throw new WalletException(sprintf('Cannot access unreadable prop "%s"', $prop));
     }
 
     /**
@@ -185,6 +203,23 @@ class Wallet
     public function account(int $accountIndex): Account
     {
         return $this->accounts->get($accountIndex);
+    }
+
+    /**
+     * @param string $password
+     * @param bool $hashPassword
+     * @return Wallet
+     * @throws WalletException
+     */
+    public function spendingPassword(string $password, bool $hashPassword = true): self
+    {
+        $encodedPassword = $hashPassword ? hash("sha256", $password) : $password;
+        if (!Validate::Hash64($encodedPassword)) {
+            throw new WalletException('spendingPassword must be 32 byte hexadecimal string (64 hexits)');
+        }
+
+        $this->spendingPassword = $encodedPassword;
+        return $this;
     }
 
     /**

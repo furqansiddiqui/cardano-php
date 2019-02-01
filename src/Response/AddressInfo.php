@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace CardanoSL\Response;
 
 /**
- * Class AccountsList
+ * Class AddressInfo
  * @package CardanoSL\Response
  */
-class AccountsList implements \Iterator, \Countable, ResponseModelInterface
+class AddressInfo
 {
 
 }

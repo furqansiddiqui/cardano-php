@@ -25,6 +25,19 @@ class Validate
     }
 
     /**
+     * @param $addr
+     * @return bool
+     */
+    public static function Address($addr): bool
+    {
+        if (is_string($addr) && preg_match('/^[a-zA-Z0-9]{8,256}$/', $addr)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @param $name
      * @return bool
      */
