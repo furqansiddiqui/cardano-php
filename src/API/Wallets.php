@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace CardanoSL\API;
 
-use CardanoSL\Base16;
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\API_Exception;
+use CardanoSL\Response\WalletInfo;
+use CardanoSL\Validate;
 use furqansiddiqui\BIP39\BIP39;
 use furqansiddiqui\BIP39\Mnemonic;
 
@@ -84,20 +85,59 @@ class Wallets
         return BIP39::Generate(12);
     }
 
-    public function create(string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $encodePasswordBase16 = true)
+    /**
+     * @param string $name
+     * @param Mnemonic $mnemonic
+     * @param string|null $password
+     * @param string $assuranceLevel
+     * @param bool $hashPassword
+     * @return Wallet
+     * @throws API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\WalletException
+     */
+    public function create(string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $hashPassword = true): Wallet
     {
-        return $this->createOrRestore("create", $name, $mnemonic, $password, $assuranceLevel, $encodePasswordBase16);
+        return $this->createOrRestore("create", $name, $mnemonic, $password, $assuranceLevel, $hashPassword);
     }
 
-    private function createOrRestore(string $op, string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $encodePasswordBase16 = true)
+    /**
+     * @param string $name
+     * @param Mnemonic $mnemonic
+     * @param string|null $password
+     * @param string $assuranceLevel
+     * @param bool $hashPassword
+     * @return Wallet
+     * @throws API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\WalletException
+     */
+    public function restore(string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $hashPassword = true): Wallet
     {
-        if (!in_array($assuranceLevel, ["normal", "strict"])) {
+        return $this->createOrRestore("restore", $name, $mnemonic, $password, $assuranceLevel, $hashPassword);
+    }
+
+    /**
+     * @param string $op
+     * @param string $name
+     * @param Mnemonic $mnemonic
+     * @param string|null $password
+     * @param string $assuranceLevel
+     * @param bool $hashPassword
+     * @return Wallet
+     * @throws API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\WalletException
+     */
+    private function createOrRestore(string $op, string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $hashPassword = true): Wallet
+    {
+        if (!Validate::AssuranceLevel($assuranceLevel)) {
             throw new API_Exception('Invalid assuranceLevel value');
         }
 
         // Name
         $name = trim($name);
-        if (!preg_match('/^[\w\s\.\-]{3,32}$/', $name)) {
+        if (!Validate::WalletName($name)) {
             throw new API_Exception('Invalid value for wallet name');
         }
 
@@ -110,14 +150,9 @@ class Wallets
 
         // Password
         if ($password) {
-            if (!$encodePasswordBase16) {
-                $encodedPassword = $password;
-            } else {
-                $encodedPassword = Base16::Encode($password);
-            }
-
-            if (!preg_match('/^[a-f0-9]{16,64}$/', $encodedPassword)) {
-                throw new API_Exception('Invalid Base16/Hex encoded password, or length not within 16-64 hexits');
+            $encodedPassword = $hashPassword ? hash("sha256", $password) : $password;
+            if (!Validate::Hash64($encodedPassword)) {
+                throw new API_Exception('spendingPassword must be 32 byte hexadecimal string (64 hexits)');
             }
         }
 
@@ -135,8 +170,7 @@ class Wallets
 
         // Create wallet
         $res = $this->node->http()->post("/api/v1/wallets", $payload);
-
-        var_dump($res);
-
+        $walletInfo = new WalletInfo($res);
+        return new Wallet($this->node, $walletInfo->id, $walletInfo);
     }
 }
