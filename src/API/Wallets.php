@@ -133,6 +133,10 @@ class Wallets
             $payload["spendingPassword"] = $encodedPassword;
         }
 
+        // Create wallet
+        $res = $this->node->http()->post("/api/v1/wallets", $payload);
+
+        var_dump($res);
 
     }
 }
