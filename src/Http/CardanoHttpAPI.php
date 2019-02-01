@@ -50,27 +50,11 @@ class CardanoHttpAPI extends AbstractHttpClient
         }
 
         if ($res instanceof JSONResponse) {
-            $payload = $res->array();
-            $status = $payload["status"] ?? null;
-            $httpCodeStatus = $res->code() >= 200 && $res->code() < 300 ? true : false;
-
-            if ($status !== "success" || !$httpCodeStatus) {
-                $msg = $payload["message"] ?? null;
-                $detailMsg = $payload["diagnostic"]["msg"] ?? $payload["diagnostic"]["details"]["msg"] ?? null;
-
-                if ($msg && $detailMsg) {
-                    throw new API_Exception(sprintf('[%s]: %s', $msg, $detailMsg), $res->code());
-                } elseif ($msg) {
-                    throw new API_Exception(sprintf('Cardano SL API error: %s', $msg), $res->code());
-                } else {
-                    throw new API_Exception('Cardano SL API call not successful, unknown error', $res->code());
-                }
-            }
-
-            $jsonResponse = new HttpJSONResponse();
-            $jsonResponse->httpCode = $res->code();
-            $jsonResponse->payload = $payload;
-            $jsonResponse->headers = $res->headers();
+            $jsonResponse = new HttpJSONResponse(
+                $res->code(),
+                $res->array(),
+                $res->headers()
+            );
 
             return $jsonResponse;
         }
