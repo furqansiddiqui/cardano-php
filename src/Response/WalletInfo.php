@@ -34,12 +34,15 @@ class WalletInfo implements ResponseModelInterface
 
     /**
      * WalletInfo constructor.
-     * @param HttpJSONResponse $res
+     * @param $data
      * @throws API_ResponseException
      */
-    public function __construct(HttpJSONResponse $res)
+    public function __construct($data)
     {
-        $data = $res->payload["data"] ?? null;
+        if ($data instanceof HttpJSONResponse) {
+            $data = $res->payload["data"] ?? null;
+        }
+
         if (!is_array($data) || !$data) {
             throw API_ResponseException::RequirePropMissing("data");
         }
