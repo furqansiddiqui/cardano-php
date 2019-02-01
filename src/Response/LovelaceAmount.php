@@ -36,6 +36,6 @@ class LovelaceAmount implements ResponseModelInterface
         }
 
         $this->lovelace = $lovelaceAmount;
-        $this->ada = bcdiv(strval($this->lovelace), bcpow("10", "6", 0), 6);
+        $this->ada = bcdiv(strval($this->lovelace), bcpow("10", strval(CardanoSL::SCALE), 0), CardanoSL::SCALE);
     }
 }
