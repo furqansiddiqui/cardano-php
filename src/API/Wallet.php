@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace CardanoSL\API;
 
 use CardanoSL\CardanoSL;
+use CardanoSL\Exception\API_ResponseException;
 use CardanoSL\Exception\WalletException;
 use CardanoSL\Response\WalletInfo;
 use CardanoSL\Validate;
@@ -23,6 +24,9 @@ class Wallet
     private $info;
     /** @var null|Mnemonic */
     private $mnemonic;
+
+    /** @var null|bool */
+    private $_isDeleted;
 
     /**
      * Wallet constructor.
@@ -57,10 +61,13 @@ class Wallet
     /**
      * @param bool $forceReload
      * @return WalletInfo
-     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws API_ResponseException
+     * @throws WalletException
      */
     public function info(bool $forceReload = false): WalletInfo
     {
+        $this->isWalletDeleted();
+
         if ($this->info && !$forceReload) {
             return $this->info;
         }
@@ -71,12 +78,62 @@ class Wallet
     }
 
     /**
+     * @param string $assuranceLevel
+     * @param string $walletName
+     * @return WalletInfo
+     * @throws API_ResponseException
+     * @throws WalletException
+     */
+    public function update(string $assuranceLevel, string $walletName): WalletInfo
+    {
+        $this->isWalletDeleted();
+
+        if (!Validate::AssuranceLevel($assuranceLevel)) {
+            throw API_ResponseException::InvalidPropValue("assuranceLevel");
+        }
+
+        if (!Validate::WalletName($walletName)) {
+            throw API_ResponseException::InvalidPropValue("walletName");
+        }
+
+        $payload = [
+            "assuranceLevel" => $assuranceLevel,
+            "name" => $walletName
+        ];
+
+        $update = $this->node->http()->put(sprintf('/api/v1/wallets/%s', $this->id), $payload);
+        $this->info = new WalletInfo($update);
+        return $this->info;
+    }
+
+    /**
+     * @throws WalletException
+     */
+    public function delete(): void
+    {
+        $this->isWalletDeleted();
+
+        $this->node->http()->delete(sprintf('/api/v1/wallets/%s', $this->id));
+        $this->_isDeleted = true;
+    }
+
+    /**
      * ONLY return Mnemonic object for instances result of create/restore operations
      * @return null|Mnemonic
      */
     public function mnemonic(): ?Mnemonic
     {
         return $this->mnemonic;
+    }
+
+    /**
+     * @throws WalletException
+     */
+    private function isWalletDeleted(): void
+    {
+        if ($this->_isDeleted) {
+            throw new WalletException(sprintf('Wallet "%s" is deleted, cannot perform requested op', $this->id));
+        }
     }
 
     /**
