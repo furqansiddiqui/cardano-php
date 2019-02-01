@@ -13,6 +13,8 @@ use CardanoSL\Response\NodeInfo;
  */
 class CardanoSL
 {
+    public const MAX_LOVELACE = 45000000000000000;
+
     /** @var AbstractHttpClient */
     private $httpClient;
     /** @var string */
@@ -38,11 +40,35 @@ class CardanoSL
     }
 
     /**
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [sprintf('Cardano SL node "%s"', $this->host)];
+    }
+
+    /**
      * @return AbstractHttpClient
      */
     public function http(): AbstractHttpClient
     {
         return $this->httpClient;
+    }
+
+    /**
+     * @return string
+     */
+    public function host(): string
+    {
+        return $this->host;
+    }
+
+    /**
+     * @return int
+     */
+    public function port(): int
+    {
+        return $this->port;
     }
 
     /**
