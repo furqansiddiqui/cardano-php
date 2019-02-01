@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CardanoSL;
 
+use CardanoSL\API\Wallets;
 use CardanoSL\Http\AbstractHttpClient;
 use CardanoSL\Http\CardanoHttpAPI;
 use CardanoSL\Response\NodeInfo;
@@ -21,6 +22,8 @@ class CardanoSL
     private $host;
     /** @var int */
     private $port;
+    /** @var null|Wallets */
+    private $_api_Wallets;
 
     /**
      * CardanoSL constructor.
@@ -69,6 +72,19 @@ class CardanoSL
     public function port(): int
     {
         return $this->port;
+    }
+
+    /**
+     * @return Wallets
+     */
+    public function wallets(): Wallets
+    {
+        if ($this->_api_Wallets) {
+            return $this->_api_Wallets;
+        }
+
+        $this->_api_Wallets = new Wallets($this);
+        return $this->_api_Wallets;
     }
 
     /**
