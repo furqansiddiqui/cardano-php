@@ -46,6 +46,7 @@ class CardanoSL
 
     public function nodeInfo()
     {
-
+        $nodeInfo = $this->httpClient->get("/api/v1/node-info");
+        var_dump($nodeInfo);
     }
 }
