@@ -67,7 +67,10 @@ namespace CardanoSL\Http {
                 } elseif ($msg) {
                     throw new API_ResponseException(sprintf('Cardano SL API error: %s', $msg), $this->httpCode);
                 } else {
-                    throw new API_ResponseException('Cardano SL API call not successful, unknown error', $this->httpCode);
+                    throw new API_ResponseException(
+                        sprintf('Cardano SL API call not successful, unknown error, status "%s"', $this->status),
+                        $this->httpCode
+                    );
                 }
             }
 
