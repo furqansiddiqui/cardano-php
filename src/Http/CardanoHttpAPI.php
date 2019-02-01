@@ -35,7 +35,7 @@ class CardanoHttpAPI extends AbstractHttpClient
         }
 
         if ($payload) {
-            $req->payload($payload);
+            $req->payload($payload, true);
         }
 
         $res = $req->send();
