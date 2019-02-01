@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace CardanoSL;
 
+use CardanoSL\Exception\API_Exception;
+
 /**
  * Class Validate
  * @package CardanoSL
@@ -50,18 +52,47 @@ class Validate
     }
 
     /**
-     * @param $id
+     * @param $index
      * @return bool
      */
-    public static function AccountId($id): bool
+    public static function AccountIndex($index): bool
     {
-        if (!is_int($id)) {
+        if (!is_int($index)) {
             return false;
-        } elseif ($id < CardanoSL::MIN_ACCOUNTS_ID || $id > CardanoSL::MIN_ACCOUNTS_ID) {
+        } elseif ($index < CardanoSL::MIN_ACCOUNTS_INDEX || $index > CardanoSL::MAX_ACCOUNTS_INDEX) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * @param $amount
+     * @param string|null $which
+     * @return bool
+     * @throws API_Exception
+     */
+
+
+    /**
+     * @param $amount
+     * @param int|null $maxScale
+     * @param bool $signed
+     * @return bool
+     */
+    public static function BcAmount($amount, ?int $maxScale = null, bool $signed = false): bool
+    {
+        if (!is_string($amount)) {
+            return false;
+        }
+
+        $decimalSign = $maxScale ? '{1,' . $maxScale . '}' : '+';
+        $pattern = '[0-9]+(\.[0-9]' . $decimalSign . ')?';
+        if ($signed) {
+            $pattern = '\-?' . $pattern;
+        }
+
+        return preg_match('/^' . $pattern . '$/', $amount) ? true : false;
     }
 
     /**

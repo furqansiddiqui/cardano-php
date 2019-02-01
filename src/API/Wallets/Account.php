@@ -19,7 +19,7 @@ class Account
     /** @var Wallet */
     private $wallet;
     /** @var int */
-    private $accountId;
+    private $accountIndex;
     /** @var null|AccountInfo */
     private $info;
 
@@ -27,17 +27,17 @@ class Account
      * Account constructor.
      * @param CardanoSL $node
      * @param Wallet $wallet
-     * @param int $accountId
+     * @param int $accountIndex
      * @param bool $preloadInfo
      * @throws AccountException
      */
-    public function __construct(CardanoSL $node, Wallet $wallet, int $accountId, bool $preloadInfo = true)
+    public function __construct(CardanoSL $node, Wallet $wallet, int $accountIndex, bool $preloadInfo = true)
     {
-        self::isValidIdentifier($accountId);
+        self::isValidIndex($accountIndex);
 
         $this->node = $node;
         $this->wallet = $wallet;
-        $this->accountId = $accountId;
+        $this->accountIndex = $accountIndex;
 
         if ($preloadInfo) {
 
@@ -45,13 +45,13 @@ class Account
     }
 
     /**
-     * @param $accountId
+     * @param $accountIndex
      * @throws AccountException
      */
-    public static function isValidIdentifier($accountId): void
+    public static function isValidIndex($accountIndex): void
     {
-        if (!Validate::AccountId($accountId)) {
-            throw new AccountException('Invalid account identifier');
+        if (!Validate::AccountIndex($accountIndex)) {
+            throw new AccountException('Invalid account index');
         }
     }
 }

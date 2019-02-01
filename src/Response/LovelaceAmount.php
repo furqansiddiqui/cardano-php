@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace CardanoSL\Response;
 
 use CardanoSL\CardanoSL;
-use CardanoSL\Exception\API_ResponseException;
+use CardanoSL\Exception\AmountException;
 
 /**
  * Class LovelaceAmount
@@ -21,7 +21,7 @@ class LovelaceAmount implements ResponseModelInterface
      * LovelaceAmount constructor.
      * @param null $lovelaceAmount
      * @param string|null $which
-     * @throws API_ResponseException
+     * @throws AmountException
      */
     public function __construct($lovelaceAmount = null, ?string $which = null)
     {
@@ -30,9 +30,9 @@ class LovelaceAmount implements ResponseModelInterface
         }
 
         if (!is_int($lovelaceAmount)) {
-            throw new API_ResponseException($which . 'Lovelace amount must be an integer');
+            throw new AmountException($which . 'Lovelace amount must be an integer');
         } elseif ($lovelaceAmount > CardanoSL::MAX_LOVELACE) {
-            throw new API_ResponseException($which . sprintf('Lovelace amount cannot exceed %d', CardanoSL::MAX_LOVELACE));
+            throw new AmountException($which . sprintf('Lovelace amount cannot exceed %d', CardanoSL::MAX_LOVELACE));
         }
 
         $this->lovelace = $lovelaceAmount;

@@ -178,13 +178,13 @@ class Wallet
     }
 
     /**
-     * @param int $accountId
+     * @param int $accountIndex
      * @return Account
      * @throws \CardanoSL\Exception\AccountException
      */
-    public function account(int $accountId): Account
+    public function account(int $accountIndex): Account
     {
-        return $this->accounts->get($accountId);
+        return $this->accounts->get($accountIndex);
     }
 
     /**

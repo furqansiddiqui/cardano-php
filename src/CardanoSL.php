@@ -16,8 +16,8 @@ class CardanoSL
 {
     public const SCALE = 6;
     public const MAX_LOVELACE = 45000000000000000;
-    public const MIN_ACCOUNTS_ID = 2147483648;
-    public const MAX_ACCOUNTS_ID = 4294967295;
+    public const MIN_ACCOUNTS_INDEX = 2147483648;
+    public const MAX_ACCOUNTS_INDEX = 4294967295;
 
     /** @var AbstractHttpClient */
     private $httpClient;

@@ -17,6 +17,7 @@ class Accounts
     private $wallet;
     /** @var array */
     private $accountInstances;
+    private $account;
 
     /**
      * Accounts constructor.
@@ -31,40 +32,41 @@ class Accounts
     }
 
     /**
-     * @param int $accountId
+     * @param int $accountIndex
      * @param bool $forceInstanceRefresh
      * @param bool $preloadInfo
      * @return Account
      * @throws \CardanoSL\Exception\AccountException
      */
-    public function account(int $accountId, bool $forceInstanceRefresh = false, bool $preloadInfo = true): Account
+    public function account(int $accountIndex, bool $forceInstanceRefresh = false, bool $preloadInfo = true): Account
     {
-        Account::isValidIdentifier($accountId);
+        Account::isValidIndex($accountIndex);
 
         // Search existing instance
         if (!$forceInstanceRefresh) {
             foreach ($this->accountInstances as $id => $instance) {
-                if ($accountId === $id) {
+                if ($accountIndex === strval($id)) {
                     return $instance;
                 }
             }
         }
 
         // Create new Account API instance
-        $account = new Account($this->node, $this->wallet, $accountId, $preloadInfo);
-        $this->accountInstances[$accountId] = $account;
+        $account = new Account($this->node, $this->wallet, $accountIndex, $preloadInfo);
+        $this->accountInstances[strval($accountIndex)] = $account;
         return $account;
     }
 
     /**
-     * @param int $accountId
+     * @param int $accountIndex
      * @param bool $forceInstanceRefresh
      * @param bool $preloadInfo
      * @return Account
      * @throws \CardanoSL\Exception\AccountException
      */
-    public function get(int $accountId, bool $forceInstanceRefresh = false, bool $preloadInfo = true): Account
+    public function get(int $accountIndex, bool $forceInstanceRefresh = false, bool $preloadInfo = true): Account
     {
-        return $this->account($accountId, $forceInstanceRefresh, $preloadInfo);
+        $this->account = $this->account($accountIndex, $forceInstanceRefresh, $preloadInfo);
+        return $this->account;
     }
 }
