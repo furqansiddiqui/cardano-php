@@ -67,16 +67,16 @@ abstract class AbstractHttpClient
      * @param string $method
      * @param string $endpoint
      * @param array|null $payload
-     * @return array
+     * @return HttpJSONResponse
      */
-    abstract public function call(string $method, string $endpoint, ?array $payload = null): array;
+    abstract public function call(string $method, string $endpoint, ?array $payload = null): HttpJSONResponse;
 
     /**
      * @param string $endpoint
      * @param array|null $payload
-     * @return array
+     * @return HttpJSONResponse
      */
-    public function get(string $endpoint, ?array $payload = null): array
+    public function get(string $endpoint, ?array $payload = null): HttpJSONResponse
     {
         return $this->call("GET", $endpoint, $payload);
     }
@@ -84,9 +84,9 @@ abstract class AbstractHttpClient
     /**
      * @param string $endpoint
      * @param array|null $payload
-     * @return array
+     * @return HttpJSONResponse
      */
-    public function post(string $endpoint, ?array $payload = null): array
+    public function post(string $endpoint, ?array $payload = null): HttpJSONResponse
     {
         return $this->call("POST", $endpoint, $payload);
     }
@@ -94,9 +94,9 @@ abstract class AbstractHttpClient
     /**
      * @param string $endpoint
      * @param array|null $payload
-     * @return array
+     * @return HttpJSONResponse
      */
-    public function put(string $endpoint, ?array $payload = null): array
+    public function put(string $endpoint, ?array $payload = null): HttpJSONResponse
     {
         return $this->call("PUT", $endpoint, $payload);
     }
@@ -104,9 +104,9 @@ abstract class AbstractHttpClient
     /**
      * @param string $endpoint
      * @param array|null $payload
-     * @return array
+     * @return HttpJSONResponse
      */
-    public function delete(string $endpoint, ?array $payload = null): array
+    public function delete(string $endpoint, ?array $payload = null): HttpJSONResponse
     {
         return $this->call("DELETE", $endpoint, $payload);
     }

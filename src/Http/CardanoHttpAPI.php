@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace CardanoSL\Http;
 
+use CardanoSL\Exception\HttpAPIException;
 use HttpClient\Request;
+use HttpClient\Response\JSONResponse;
+use HttpClient\Response\Response;
 
 /**
  * Class CardanoHttpAPI
@@ -11,12 +14,20 @@ use HttpClient\Request;
  */
 class CardanoHttpAPI extends AbstractHttpClient
 {
-    public function call(string $method, string $endpoint, ?array $payload = null): array
+    /**
+     * @param string $method
+     * @param string $endpoint
+     * @param array|null $payload
+     * @return HttpJSONResponse
+     * @throws HttpAPIException
+     * @throws \HttpClient\Exception\HttpClientException
+     * @throws \HttpClient\Exception\RequestException
+     * @throws \HttpClient\Exception\ResponseException
+     * @throws \HttpClient\Exception\SSLException
+     */
+    public function call(string $method, string $endpoint, ?array $payload = null): HttpJSONResponse
     {
-        $req = new Request($method);
-        $req->url($this->url($endpoint));
-        $req->json();
-
+        $req = new Request($method, $this->url($endpoint));
         if ($this->tls) {
             $this->tls->apply($req);
         }
@@ -26,6 +37,24 @@ class CardanoHttpAPI extends AbstractHttpClient
         }
 
         $res = $req->send();
-        var_dump($res);
+        if ($res instanceof Response) {
+            $body = $res->body();
+            $bodyLen = mb_strlen($body);
+            if ($bodyLen > 1 && $bodyLen < 256) {
+                throw new HttpAPIException(strip_tags($body), $res->code());
+            }
+
+            throw new HttpAPIException(sprintf('Got non-JSON response with HTTP code %d', $res->code()));
+        }
+
+        if ($res instanceof JSONResponse) {
+            $jsonResponse = new HttpJSONResponse();
+            $jsonResponse->httpCode = $res->code();
+            $jsonResponse->payload = $res->array();
+            $jsonResponse->headers = $res->headers();
+            return $jsonResponse;
+        }
+
+        throw new HttpAPIException('No response was received');
     }
 }
