@@ -47,6 +47,14 @@ class AccountsList implements \Iterator, \Countable, ResponseModelInterface
     }
 
     /**
+     * @return AccountInfo|null
+     */
+    public function first(): ?AccountInfo
+    {
+        return $this->accounts[0] ?? null;
+    }
+
+    /**
      * @return int
      */
     public function count(): int

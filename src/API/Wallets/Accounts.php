@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace CardanoSL\API\Wallets;
 
 use CardanoSL\CardanoSL;
+use CardanoSL\Exception\API_Exception;
+use CardanoSL\Response\AccountInfo;
 use CardanoSL\Response\AccountsList;
 
 /**
@@ -18,6 +20,8 @@ class Accounts
     private $wallet;
     /** @var array */
     private $accountInstances;
+    /** @var null|int */
+    private $firstAccountIndex;
 
     /**
      * Accounts constructor.
@@ -47,7 +51,37 @@ class Accounts
         ];
 
         $res = $this->node->http()->get(sprintf('/api/v1/wallets/%s/accounts', $this->wallet->id), $payload);
-        return new AccountsList($res);
+        $accountsList = new AccountsList($res);
+        if ($page === 1) {
+            $firstFromList = $accountsList->first();
+            if ($firstFromList instanceof AccountInfo) {
+                $this->firstAccountIndex = $firstFromList->index;
+            }
+        }
+
+        return $accountsList;
+    }
+
+    /**
+     * @return Account
+     * @throws API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\AccountException
+     * @throws \CardanoSL\Exception\AmountException
+     */
+    public function primary(): Account
+    {
+        if (!$this->firstAccountIndex) {
+            // Retrieve first/primary account
+            $this->list(1);
+        }
+
+        if (!$this->firstAccountIndex) {
+            $smallWalletId = substr($this->wallet->id, 0, 12);
+            throw new API_Exception(sprintf('Primary account for wallet "%s..." not defined', $smallWalletId));
+        }
+
+        return $this->account($this->firstAccountIndex);
     }
 
     /**
