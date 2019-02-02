@@ -93,9 +93,22 @@ class CardanoSL
         return $this->_api_Wallets;
     }
 
+    /**
+     * @param int $page
+     * @param int $perPage
+     * @return AddressesList
+     * @throws Exception\API_Exception
+     * @throws Exception\API_ResponseException
+     */
     public function addresses(int $page = 1, int $perPage = 10): AddressesList
     {
+        $payload = [
+            "page" => $page,
+            "per_page" => $perPage
+        ];
 
+        $res = $this->httpClient->get('/api/v1/addresses', $payload);
+        return new AddressesList($res->payload["data"] ?? null, $res->meta->pagination);
     }
 
     /**
@@ -105,7 +118,7 @@ class CardanoSL
      * @throws Exception\API_Exception
      * @throws Exception\API_ResponseException
      */
-    public function address(string $address): AddressInfo
+    public function addressInfo(string $address): AddressInfo
     {
         if (!Validate::Address($address)) {
             throw new AddressException('Invalid Cardano SL address');

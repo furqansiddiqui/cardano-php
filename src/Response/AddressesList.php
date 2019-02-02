@@ -106,6 +106,6 @@ class AddressesList implements \Iterator, \Countable, ResponseModelInterface
      */
     public function valid(): bool
     {
-        return isset($this->wallets[$this->pos]);
+        return isset($this->addresses[$this->pos]);
     }
 }
