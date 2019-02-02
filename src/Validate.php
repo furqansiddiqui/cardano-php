@@ -65,6 +65,15 @@ class Validate
     }
 
     /**
+     * @param $ownership
+     * @return bool
+     */
+    public static function AddressOwnership($ownership) : bool
+    {
+        return is_string($ownership) && in_array($ownership, ["isOurs", "ambiguousOwnership"]) ? true : false;
+    }
+
+    /**
      * @param $index
      * @return bool
      */
