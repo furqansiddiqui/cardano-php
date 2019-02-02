@@ -98,14 +98,21 @@ class CardanoSL
 
     }
 
+    /**
+     * @param string $address
+     * @return AddressInfo
+     * @throws AddressException
+     * @throws Exception\API_Exception
+     * @throws Exception\API_ResponseException
+     */
     public function address(string $address): AddressInfo
     {
         if (!Validate::Address($address)) {
             throw new AddressException('Invalid Cardano SL address');
         }
 
-        $req = $this->httpClient->get(sprintf('/api/v1/addresses/%s', $address));
-        var_dump($req);
+        $res = $this->httpClient->get(sprintf('/api/v1/addresses/%s', $address));
+        return new AddressInfo($res);
     }
 
     /**
