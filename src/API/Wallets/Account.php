@@ -75,7 +75,7 @@ class Account
         if ($this->wallet->hasInfoLoaded) {
             if ($this->wallet->info()->hasSpendingPassword) {
                 if (!$this->wallet->spendingPassword) {
-                    throw new AccountException('Cannot create account, wallet.spendingPassword is not defined');
+                    throw new AccountException('Cannot create address, wallet.spendingPassword is not defined');
                 }
             }
         }
