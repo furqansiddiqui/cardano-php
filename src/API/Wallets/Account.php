@@ -7,7 +7,9 @@ use CardanoSL\CardanoSL;
 use CardanoSL\Exception\AccountException;
 use CardanoSL\Exception\API_Exception;
 use CardanoSL\Response\AccountInfo;
+use CardanoSL\Response\AddressesList;
 use CardanoSL\Response\AddressInfo;
+use CardanoSL\Response\LovelaceAmount;
 use CardanoSL\Validate;
 
 /**
@@ -50,6 +52,14 @@ class Account
     }
 
     /**
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [sprintf('AccountIndex: %d', $this->accountIndex)];
+    }
+
+    /**
      * @return AddressInfo
      * @throws API_Exception
      * @throws AccountException
@@ -78,6 +88,41 @@ class Account
 
         $res = $this->node->http()->post('/api/v1/addresses', $payload);
         return new AddressInfo($res);
+    }
+
+    /**
+     * @param int $page
+     * @param int $perPage
+     * @param string|null $addressFilter
+     * @return AddressesList
+     * @throws API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     */
+    public function addresses(int $page = 1, int $perPage = 10, ?string $addressFilter = null): AddressesList
+    {
+        $payload = [
+            "page" => $page,
+            "per_page" => $perPage
+        ];
+
+        if ($addressFilter) {
+            $payload["address"] = $addressFilter;
+        }
+
+        $endpoint = sprintf('/api/v1/wallets/%s/accounts/%d/addresses', $this->wallet->id, $this->accountIndex);
+        $res = $this->node->http()->get($endpoint, $payload);
+        return new AddressesList($res, $res->meta->pagination);
+    }
+
+    /**
+     * @return LovelaceAmount
+     * @throws \CardanoSL\Exception\AmountException
+     */
+    public function balance(): LovelaceAmount
+    {
+        $endpoint = sprintf('/api/v1/wallets/%s/accounts/%d/amount', $this->wallet->id, $this->accountIndex);
+        $res = $this->node->http()->get($endpoint);
+        return new LovelaceAmount($res->payload["data"]["amount"] ?? null, sprintf('account[%d].balance', $this->accountIndex));
     }
 
     /**
