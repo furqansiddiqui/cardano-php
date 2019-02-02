@@ -51,7 +51,7 @@ class WalletInfo implements ResponseModelInterface
 
         $this->id = Validate::WalletIdentifier($data["id"] ?? null) ? $data["id"] : null;
         if (!$this->id) {
-            throw API_ResponseException::InvalidPropValue("id");
+            throw API_ResponseException::InvalidPropValue("wallet.id");
         }
 
         $this->assuranceLevel = $data["assuranceLevel"] ?? null;
