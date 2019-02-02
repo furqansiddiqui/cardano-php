@@ -85,6 +85,21 @@ class Wallet
     }
 
     /**
+     * Load walletInfo if not already loaded, this makes wallet further usable down the road
+     *
+     * @return Wallet
+     * @throws API_ResponseException
+     * @throws WalletException
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\AmountException
+     */
+    public function load(): self
+    {
+        $this->info();
+        return $this;
+    }
+
+    /**
      * @param bool $forceReload
      * @return WalletInfo
      * @throws API_ResponseException
