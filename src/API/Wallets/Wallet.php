@@ -117,7 +117,8 @@ class Wallet
 
         // Get wallet info
         $walletInfo = $this->node->http()->get(sprintf('/api/v1/wallets/%s', $this->id));
-        return new WalletInfo($walletInfo);
+        $this->info = new WalletInfo($walletInfo);
+        return $this->info;
     }
 
     /**
