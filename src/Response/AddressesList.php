@@ -40,7 +40,7 @@ class AddressesList implements \Iterator, \Countable, ResponseModelInterface
         }
 
         foreach ($list as $addrInfo) {
-            $this->addresses = new AddressInfo($addrInfo);
+            $this->addresses[] = new AddressInfo($addrInfo);
             $this->count++;
         }
     }
