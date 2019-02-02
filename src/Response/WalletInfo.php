@@ -41,7 +41,7 @@ class WalletInfo implements ResponseModelInterface
     public function __construct($data)
     {
         if ($data instanceof HttpJSONResponse) {
-            $data = $res->payload["data"] ?? null;
+            $data = $data->payload["data"] ?? null;
         }
 
         if (!is_array($data) || !$data) {
