@@ -6,7 +6,6 @@ namespace CardanoSL\API\Wallets;
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\AccountException;
 use CardanoSL\Response\AccountInfo;
-use CardanoSL\Response\AddressInfo;
 use CardanoSL\Validate;
 
 /**
@@ -31,6 +30,9 @@ class Account
      * @param int $accountIndex
      * @param bool $preloadInfo
      * @throws AccountException
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\AmountException
      */
     public function __construct(CardanoSL $node, Wallet $wallet, int $accountIndex, bool $preloadInfo = true)
     {
@@ -41,13 +43,27 @@ class Account
         $this->accountIndex = $accountIndex;
 
         if ($preloadInfo) {
-
+            $this->info();
         }
     }
 
-    public function createAddress(): AddressInfo
+    /**
+     * @param bool $forceReload
+     * @return AccountInfo
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\AmountException
+     */
+    public function info(bool $forceReload = false): AccountInfo
     {
+        if ($this->info && !$forceReload) {
+            return $this->info;
+        }
 
+        $endpoint = sprintf('/api/v1/wallets/%s/accounts/%d', $this->wallet->id, $this->accountIndex);
+        $res = $this->node->http()->get($endpoint);
+        $this->info = new AccountInfo($res, $res->meta->pagination);
+        return $this->info;
     }
 
     /**

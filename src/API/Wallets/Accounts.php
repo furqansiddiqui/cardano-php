@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace CardanoSL\API\Wallets;
 
 use CardanoSL\CardanoSL;
+use CardanoSL\Response\AccountsList;
 
 /**
  * Class Accounts
@@ -17,7 +18,6 @@ class Accounts
     private $wallet;
     /** @var array */
     private $accountInstances;
-    private $account;
 
     /**
      * Accounts constructor.
@@ -32,11 +32,33 @@ class Accounts
     }
 
     /**
+     * @param int $page
+     * @param int $perPage
+     * @return AccountsList
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\AmountException
+     */
+    public function list(int $page = 1, int $perPage = 10): AccountsList
+    {
+        $payload = [
+            "page" => $page,
+            "per_page" => $perPage
+        ];
+
+        $res = $this->node->http()->get(sprintf('/api/v1/wallets/%s/accounts', $this->wallet->id), $payload);
+        return new AccountsList($res);
+    }
+
+    /**
      * @param int $accountIndex
      * @param bool $forceInstanceRefresh
      * @param bool $preloadInfo
      * @return Account
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
      * @throws \CardanoSL\Exception\AccountException
+     * @throws \CardanoSL\Exception\AmountException
      */
     public function account(int $accountIndex, bool $forceInstanceRefresh = false, bool $preloadInfo = true): Account
     {
@@ -62,11 +84,13 @@ class Accounts
      * @param bool $forceInstanceRefresh
      * @param bool $preloadInfo
      * @return Account
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
      * @throws \CardanoSL\Exception\AccountException
+     * @throws \CardanoSL\Exception\AmountException
      */
     public function get(int $accountIndex, bool $forceInstanceRefresh = false, bool $preloadInfo = true): Account
     {
-        $this->account = $this->account($accountIndex, $forceInstanceRefresh, $preloadInfo);
-        return $this->account;
+        return $this->account($accountIndex, $forceInstanceRefresh, $preloadInfo);
     }
 }

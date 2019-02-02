@@ -13,6 +13,7 @@ use furqansiddiqui\BIP39\Mnemonic;
 /**
  * Class Wallet
  * @package CardanoSL\API\Wallets
+ * @property-read string $id
  * @property-read null|string $spendingPassword
  */
 class Wallet
@@ -73,6 +74,8 @@ class Wallet
         switch ($prop) {
             case "spendingPassword":
                 return $this->spendingPassword;
+            case "id":
+                return $this->id;
         }
 
         throw new WalletException(sprintf('Cannot access unreadable prop "%s"', $prop));
@@ -204,7 +207,10 @@ class Wallet
     /**
      * @param int $accountIndex
      * @return Account
+     * @throws API_ResponseException
+     * @throws \CardanoSL\Exception\API_Exception
      * @throws \CardanoSL\Exception\AccountException
+     * @throws \CardanoSL\Exception\AmountException
      */
     public function account(int $accountIndex): Account
     {

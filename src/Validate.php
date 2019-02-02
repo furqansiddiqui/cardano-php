@@ -68,7 +68,7 @@ class Validate
      * @param $ownership
      * @return bool
      */
-    public static function AddressOwnership($ownership) : bool
+    public static function AddressOwnership($ownership): bool
     {
         return is_string($ownership) && in_array($ownership, ["isOurs", "ambiguousOwnership"]) ? true : false;
     }
@@ -86,6 +86,15 @@ class Validate
         }
 
         return true;
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public static function AccountName($name): bool
+    {
+        return is_string($name) && preg_match('/^[\w\s\.\-]{1,32}$/', $name) ? true : false;
     }
 
     /**
