@@ -36,12 +36,13 @@ class Account
      * @param Wallet $wallet
      * @param int $accountIndex
      * @param bool $preloadInfo
+     * @param AccountInfo|null $info
+     * @throws API_Exception
      * @throws AccountException
-     * @throws \CardanoSL\Exception\API_Exception
      * @throws \CardanoSL\Exception\API_ResponseException
      * @throws \CardanoSL\Exception\AmountException
      */
-    public function __construct(CardanoSL $node, Wallet $wallet, int $accountIndex, bool $preloadInfo = true)
+    public function __construct(CardanoSL $node, Wallet $wallet, int $accountIndex, bool $preloadInfo = true, ?AccountInfo $info = null)
     {
         self::isValidIndex($accountIndex);
 
@@ -51,6 +52,10 @@ class Account
 
         if ($preloadInfo) {
             $this->info();
+        } else {
+            if ($info) {
+                $this->info = $info;
+            }
         }
     }
 

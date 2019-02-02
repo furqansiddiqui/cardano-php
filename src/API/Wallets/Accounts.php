@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace CardanoSL\API\Wallets;
 
 use CardanoSL\CardanoSL;
+use CardanoSL\Exception\AccountException;
 use CardanoSL\Exception\API_Exception;
 use CardanoSL\Response\AccountInfo;
 use CardanoSL\Response\AccountsList;
+use CardanoSL\Validate;
 
 /**
  * Class Accounts
@@ -111,6 +113,45 @@ class Accounts
         $account = new Account($this->node, $this->wallet, $accountIndex, $preloadInfo);
         $this->accountInstances[strval($accountIndex)] = $account;
         return $account;
+    }
+
+    /**
+     * @param string $name
+     * @return Account
+     * @throws API_Exception
+     * @throws AccountException
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\AmountException
+     * @throws \CardanoSL\Exception\WalletException
+     */
+    public function create(string $name): Account
+    {
+        if (!Validate::AccountName($name)) {
+            throw new AccountException('Invalid name for new account');
+        }
+
+        if ($this->wallet->hasInfoLoaded) {
+            if ($this->wallet->info()->hasSpendingPassword) {
+                if (!$this->wallet->spendingPassword) {
+                    throw new AccountException('Cannot create account, wallet.spendingPassword is not defined');
+                }
+            }
+        }
+
+        $endpoint = sprintf('/api/v1/wallets/%s/accounts', $this->wallet->id);
+        $payload = [
+            "name" => $name
+        ];
+
+        if ($this->wallet->spendingPassword) {
+            $payload["spendingPassword"] = $this->wallet->spendingPassword;
+        }
+
+        $res = $this->node->http()->post($endpoint, $payload);
+        $newAccountInfo = new AccountInfo($res);
+        $newAccount = new Account($this->node, $this->wallet, $newAccountInfo->index, false, $newAccountInfo);
+        $this->accountInstances[strval($newAccountInfo->index)] = $newAccount;
+        return $newAccount;
     }
 
     /**
