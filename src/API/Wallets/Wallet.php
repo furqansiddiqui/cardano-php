@@ -83,6 +83,8 @@ class Wallet
      * @return WalletInfo
      * @throws API_ResponseException
      * @throws WalletException
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\AmountException
      */
     public function info(bool $forceReload = false): WalletInfo
     {
@@ -103,6 +105,8 @@ class Wallet
      * @return WalletInfo
      * @throws API_ResponseException
      * @throws WalletException
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\AmountException
      */
     public function update(string $assuranceLevel, string $walletName): WalletInfo
     {
@@ -144,6 +148,8 @@ class Wallet
      * @return WalletInfo
      * @throws API_ResponseException
      * @throws WalletException
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\AmountException
      */
     public function changePassword(string $newPassword, string $oldPassword, bool $hashPasswords = true): WalletInfo
     {

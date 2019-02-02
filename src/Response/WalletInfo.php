@@ -36,6 +36,7 @@ class WalletInfo implements ResponseModelInterface
      * WalletInfo constructor.
      * @param $data
      * @throws API_ResponseException
+     * @throws \CardanoSL\Exception\API_Exception
      * @throws \CardanoSL\Exception\AmountException
      */
     public function __construct($data)

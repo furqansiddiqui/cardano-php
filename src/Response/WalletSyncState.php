@@ -25,6 +25,7 @@ class WalletSyncState implements ResponseModelInterface
      * @param array $block
      * @return WalletSyncState
      * @throws API_ResponseException
+     * @throws \CardanoSL\Exception\API_Exception
      */
     public static function Construct(array $block): self
     {

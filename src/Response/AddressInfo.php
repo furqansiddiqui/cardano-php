@@ -39,31 +39,22 @@ class AddressInfo
             throw API_ResponseException::RequirePropMissing("addressInfo.data");
         }
 
-        $this->changeAddress = $data["changeAddress"] ?? null;
         $this->id = $data["id"] ?? null;
-        $this->ownership = $data["ownership"] ?? null;
-        $this->used = $data["used"] ?? null;
-
-        $this->validate();
-    }
-
-    /**
-     * @throws API_Exception
-     */
-    public function validate(): void
-    {
         if (!Validate::Address($this->id)) {
             throw API_Exception::InvalidPropValue("addressInfo.id");
         }
 
+        $this->changeAddress = $data["changeAddress"] ?? null;
         if (!is_bool($this->changeAddress)) {
             throw API_Exception::InvalidPropValue("addressInfo.changeAddress", "bool", gettype($this->changeAddress));
         }
 
+        $this->ownership = $data["ownership"] ?? null;
         if (!Validate::AddressOwnership($this->ownership)) {
             throw API_Exception::InvalidPropValue("addressInfo.ownership");
         }
 
+        $this->used = $data["used"] ?? null;
         if (!is_bool($this->used)) {
             throw API_Exception::InvalidPropValue("addressInfo.used", "bool", gettype($this->used));
         }

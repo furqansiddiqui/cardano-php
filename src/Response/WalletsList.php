@@ -25,6 +25,7 @@ class WalletsList implements \Iterator, \Countable, ResponseModelInterface
      * WalletsList constructor.
      * @param HttpJSONResponse $res
      * @throws API_ResponseException
+     * @throws \CardanoSL\Exception\API_Exception
      * @throws \CardanoSL\Exception\AmountException
      */
     public function __construct(HttpJSONResponse $res)
