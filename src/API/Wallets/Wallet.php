@@ -175,6 +175,8 @@ class Wallet
      */
     public function changePassword(string $newPassword, string $oldPassword, bool $hashPasswords = true): WalletInfo
     {
+        $this->isWalletDeleted();
+
         $encodedNewPassword = $hashPasswords ? hash("sha256", $newPassword) : $newPassword;
         if (!Validate::Hash64($encodedNewPassword)) {
             throw new WalletException('newPassword must be 32 byte hexadecimal string (64 hexits)');
@@ -212,9 +214,12 @@ class Wallet
 
     /**
      * @return Accounts
+     * @throws WalletException
      */
     public function accounts(): Accounts
     {
+        $this->isWalletDeleted();
+
         if ($this->accounts) {
             return $this->accounts;
         }
@@ -233,6 +238,8 @@ class Wallet
      */
     public function account(int $accountIndex): Account
     {
+        $this->isWalletDeleted();
+
         return $this->accounts->get($accountIndex);
     }
 
@@ -244,6 +251,8 @@ class Wallet
      */
     public function spendingPassword(string $password, bool $hashPassword = true): self
     {
+        $this->isWalletDeleted();
+
         $encodedPassword = $hashPassword ? hash("sha256", $password) : $password;
         if (!Validate::Hash64($encodedPassword)) {
             throw new WalletException('spendingPassword must be 32 byte hexadecimal string (64 hexits)');

@@ -27,6 +27,9 @@ class Account
     /** @var null|AccountInfo */
     private $info;
 
+    /** @var null|bool */
+    private $_isDeleted;
+
     /**
      * Account constructor.
      * @param CardanoSL $node
@@ -142,6 +145,52 @@ class Account
         $res = $this->node->http()->get($endpoint);
         $this->info = new AccountInfo($res, $res->meta->pagination);
         return $this->info;
+    }
+
+    /**
+     * @param string|null $newName
+     * @return AccountInfo
+     * @throws API_Exception
+     * @throws AccountException
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\AmountException
+     */
+    public function update(string $newName = null): AccountInfo
+    {
+        $this->isAccountDeleted();
+
+        if (!Validate::AccountName($newName)) {
+            throw new AccountException('New account name is invalid');
+        }
+
+        $endpoint = sprintf('/api/v1/wallets/%s/accounts/%d', $this->wallet->id, $this->accountIndex);
+        $payload = [
+            "name" => $newName
+        ];
+
+        $res = $this->node->http()->put($endpoint, $payload);
+        $this->info = new AccountInfo($res);
+        return $this->info;
+    }
+
+    /**
+     * @return void
+     */
+    public function delete(): void
+    {
+        $endpoint = sprintf('/api/v1/wallets/%s/accounts/%d', $this->wallet->id, $this->accountIndex);
+        $this->node->http()->delete($endpoint);
+        $this->_isDeleted = true;
+    }
+
+    /**
+     * @throws AccountException
+     */
+    private function isAccountDeleted(): void
+    {
+        if ($this->_isDeleted) {
+            throw new AccountException(sprintf('Account "%d" is deleted, cannot perform requested op', $this->accountIndex));
+        }
     }
 
     /**
