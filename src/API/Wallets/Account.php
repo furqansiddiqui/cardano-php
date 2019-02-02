@@ -119,7 +119,7 @@ class Account
 
         $endpoint = sprintf('/api/v1/wallets/%s/accounts/%d/addresses', $this->wallet->id, $this->accountIndex);
         $res = $this->node->http()->get($endpoint, $payload);
-        return new AddressesList($res, $res->meta->pagination);
+        return new AddressesList($res->payload["data"]["addresses"] ?? null, $res->meta->pagination);
     }
 
     /**
