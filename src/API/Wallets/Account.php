@@ -5,7 +5,9 @@ namespace CardanoSL\API\Wallets;
 
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\AccountException;
+use CardanoSL\Exception\API_Exception;
 use CardanoSL\Response\AccountInfo;
+use CardanoSL\Response\AddressInfo;
 use CardanoSL\Validate;
 
 /**
@@ -45,6 +47,37 @@ class Account
         if ($preloadInfo) {
             $this->info();
         }
+    }
+
+    /**
+     * @return AddressInfo
+     * @throws API_Exception
+     * @throws AccountException
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\AmountException
+     * @throws \CardanoSL\Exception\WalletException
+     */
+    public function createAddress(): AddressInfo
+    {
+        if ($this->wallet->hasInfoLoaded) {
+            if ($this->wallet->info()->hasSpendingPassword) {
+                if (!$this->wallet->spendingPassword) {
+                    throw new AccountException('Cannot create account, wallet.spendingPassword is not defined');
+                }
+            }
+        }
+
+        $payload = [
+            "accountIndex" => $this->accountIndex,
+            "walletId" => $this->wallet->id
+        ];
+
+        if ($this->wallet->spendingPassword) {
+            $payload["spendingPassword"] = $this->wallet->spendingPassword;
+        }
+
+        $res = $this->node->http()->post('/api/v1/addresses', $payload);
+        return new AddressInfo($res);
     }
 
     /**

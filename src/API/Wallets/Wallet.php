@@ -15,6 +15,7 @@ use furqansiddiqui\BIP39\Mnemonic;
  * @package CardanoSL\API\Wallets
  * @property-read string $id
  * @property-read null|string $spendingPassword
+ * @property-read bool $hasInfoLoaded
  */
 class Wallet
 {
@@ -76,6 +77,8 @@ class Wallet
                 return $this->spendingPassword;
             case "id":
                 return $this->id;
+            case "hasInfoLoaded":
+                return $this->info ? true : false;
         }
 
         throw new WalletException(sprintf('Cannot access unreadable prop "%s"', $prop));
