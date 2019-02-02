@@ -94,7 +94,7 @@ class Validate
      */
     public static function AccountName($name): bool
     {
-        return is_string($name) && preg_match('/^[\w\s\.\-]{1,32}$/', $name) ? true : false;
+        return is_string($name) && preg_match('/^[\w\s\.\-\:]{1,32}$/', $name) ? true : false;
     }
 
     /**
