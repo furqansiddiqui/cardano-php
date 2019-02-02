@@ -240,7 +240,7 @@ class Wallet
     {
         $this->isWalletDeleted();
 
-        return $this->accounts->get($accountIndex);
+        return $this->accounts()->get($accountIndex);
     }
 
     /**
