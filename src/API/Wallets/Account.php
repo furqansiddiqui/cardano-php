@@ -68,6 +68,14 @@ class Account
     }
 
     /**
+     * @return int
+     */
+    public function index(): int
+    {
+        return $this->accountIndex;
+    }
+
+    /**
      * @return AddressInfo
      * @throws API_Exception
      * @throws AccountException
