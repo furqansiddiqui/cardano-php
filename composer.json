@@ -11,8 +11,8 @@
   "license": "MIT",
   "require": {
     "php": ">=7.2.0",
-    "furqansiddiqui/http-client": "0.3.4",
-    "furqansiddiqui/bip39-mnemonic-php": "0.1.1"
+    "furqansiddiqui/http-client": "^0.3.5",
+    "furqansiddiqui/bip39-mnemonic-php": "^0.1.1"
   },
   "autoload": {
     "psr-4": {
