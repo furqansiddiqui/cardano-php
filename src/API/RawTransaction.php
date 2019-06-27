@@ -41,7 +41,7 @@ class RawTransaction
 
         $this->payees[] = [
             "address" => $address,
-            "amount" => $amount->ada
+            "amount" => $amount->lovelace
         ];
 
         return $this;
