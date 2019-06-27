@@ -25,7 +25,7 @@ class TxStatus
     {
         $this->data = $data["data"] ?? null;
         $this->tag = strtolower(strval($data["tag"] ?? ""));
-        if (!in_array($this->tag, ["applying", "inNewestBlocks", "persisted", "wontApply", "creating"])) {
+        if (!in_array($this->tag, ["applying", "innewestblocks", "persisted", "wontapply", "creating"])) {
             throw API_ResponseException::InvalidPropValue("txStatus.tag");
         }
     }
