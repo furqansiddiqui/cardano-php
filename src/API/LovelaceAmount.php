@@ -37,7 +37,7 @@ class LovelaceAmount extends \CardanoSL\Response\LovelaceAmount
 
         $lovelaceAmount = new self();
         $lovelaceAmount->ada = $amount;
-        $lovelaceAmount->lovelace = intval(bcmul($amount, bcpow(10, strval(CardanoSL::SCALE), 0), CardanoSL::SCALE));
+        $lovelaceAmount->lovelace = intval(bcmul($amount, bcpow("10", strval(CardanoSL::SCALE), 0), CardanoSL::SCALE));
         return $lovelaceAmount;
     }
 
