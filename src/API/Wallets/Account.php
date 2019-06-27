@@ -10,6 +10,7 @@ use CardanoSL\Response\AccountInfo;
 use CardanoSL\Response\AddressesList;
 use CardanoSL\Response\AddressInfo;
 use CardanoSL\Response\LovelaceAmount;
+use CardanoSL\Response\TransactionsList;
 use CardanoSL\Validate;
 
 /**
@@ -128,6 +129,43 @@ class Account
         $endpoint = sprintf('/api/v1/wallets/%s/accounts/%d/addresses', $this->wallet->id, $this->accountIndex);
         $res = $this->node->http()->get($endpoint, $payload);
         return new AddressesList($res->payload["data"]["addresses"] ?? null, $res->meta->pagination);
+    }
+
+    /**
+     * @param int $page
+     * @param int $perPage
+     * @param string|null $idFilter
+     * @param string|null $createdAtFilter
+     * @param string|null $sortBy
+     * @return TransactionsList
+     * @throws API_Exception
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\AmountException
+     */
+    public function transactions(int $page = 1, int $perPage = 10, ?string $idFilter = null, ?string $createdAtFilter = null, ?string $sortBy = null): TransactionsList
+    {
+        $payload = [
+            "wallet_id" => $this->wallet->id,
+            "account_index" => $this->accountIndex,
+            "page" => $page,
+            "per_page" => $perPage
+        ];
+
+        if ($idFilter) {
+            $payload["id"] = $idFilter;
+        }
+
+        if ($createdAtFilter) {
+            $payload["created_at"] = $createdAtFilter;
+        }
+
+        if ($sortBy) {
+            $payload["sort_by"] = $sortBy;
+        }
+
+        $res = $this->node->http()->get('/api/v1/transactions', $payload);
+        $txList = new TransactionsList($res);
+        return $txList;
     }
 
     /**
