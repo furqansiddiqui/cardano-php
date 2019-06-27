@@ -6,6 +6,7 @@ namespace CardanoSL\API\Wallets;
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\API_ResponseException;
 use CardanoSL\Exception\WalletException;
+use CardanoSL\Response\TransactionsList;
 use CardanoSL\Response\WalletInfo;
 use CardanoSL\Validate;
 use furqansiddiqui\BIP39\Mnemonic;
@@ -226,6 +227,42 @@ class Wallet
 
         $this->accounts = new Accounts($this->node, $this);
         return $this->accounts;
+    }
+
+    /**
+     * @param int $page
+     * @param int $perPage
+     * @param string|null $idFilter
+     * @param string|null $createdAtFilter
+     * @param string|null $sortBy
+     * @return TransactionsList
+     * @throws API_ResponseException
+     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \CardanoSL\Exception\AmountException
+     */
+    public function transactions(int $page = 1, int $perPage = 10, ?string $idFilter = null, ?string $createdAtFilter = null, ?string $sortBy = null): TransactionsList
+    {
+        $payload = [
+            "wallet_id" => $this->id,
+            "page" => $page,
+            "per_page" => $perPage
+        ];
+
+        if ($idFilter) {
+            $payload["id"] = $idFilter;
+        }
+
+        if ($createdAtFilter) {
+            $payload["created_at"] = $createdAtFilter;
+        }
+
+        if ($sortBy) {
+            $payload["sort_by"] = $sortBy;
+        }
+
+        $res = $this->node->http()->get('/api/v1/transactions', $payload);
+        $txList = new TransactionsList($res);
+        return $txList;
     }
 
     /**
