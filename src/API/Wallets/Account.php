@@ -121,6 +121,8 @@ class Account
             throw new TransactionException('No payees/destinations');
         }
 
+        $payload["destinations"] = $destinations;
+
         // Grouping Policy
         if ($tx->groupingPolicy) {
             $payload["groupingPolicy"] = $tx->groupingPolicy;
