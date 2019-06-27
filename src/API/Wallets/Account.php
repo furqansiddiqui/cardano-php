@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace CardanoSL\API\Wallets;
 
+use CardanoSL\API\RawTransaction;
 use CardanoSL\CardanoSL;
 use CardanoSL\Exception\AccountException;
 use CardanoSL\Exception\API_Exception;
+use CardanoSL\Exception\TransactionException;
 use CardanoSL\Response\AccountInfo;
 use CardanoSL\Response\AddressesList;
 use CardanoSL\Response\AddressInfo;
 use CardanoSL\Response\LovelaceAmount;
+use CardanoSL\Response\Transaction;
 use CardanoSL\Response\TransactionsList;
 use CardanoSL\Validate;
 
@@ -74,6 +77,68 @@ class Account
     public function index(): int
     {
         return $this->accountIndex;
+    }
+
+    /**
+     * @return RawTransaction
+     */
+    public function rawTransaction(): RawTransaction
+    {
+        return new RawTransaction();
+    }
+
+    /**
+     * @param RawTransaction $tx
+     * @return Transaction
+     * @throws API_Exception
+     * @throws TransactionException
+     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \CardanoSL\Exception\AmountException
+     * @throws \CardanoSL\Exception\WalletException
+     */
+    public function spend(RawTransaction $tx): Transaction
+    {
+        if ($this->wallet->hasInfoLoaded) {
+            if ($this->wallet->info()->hasSpendingPassword) {
+                if (!$this->wallet->spendingPassword) {
+                    throw new TransactionException('Cannot spend tx, wallet.spendingPassword is not defined');
+                }
+            }
+        }
+
+        $payload = [];
+
+        // Destinations
+        $destinations = [];
+        foreach ($tx->payees as $payee) {
+            $destinations[] = [
+                "address" => $payee["address"],
+                "amount" => $payee["amount"]
+            ];
+        }
+
+        if (!$destinations) {
+            throw new TransactionException('No payees/destinations');
+        }
+
+        // Grouping Policy
+        if ($tx->groupingPolicy) {
+            $payload["groupingPolicy"] = $tx->groupingPolicy;
+        }
+
+        // Source
+        $payload["source"] = [
+            "accountIndex" => $this->accountIndex,
+            "walletId" => $this->wallet->id
+        ];
+
+        if ($this->wallet->spendingPassword) {
+            $payload["spendingPassword"] = $this->wallet->spendingPassword;
+        }
+
+        // Send transaction
+        $res = $this->node->http()->post('/api/v1/transactions', $payload);
+        return new Transaction($res);
     }
 
     /**
