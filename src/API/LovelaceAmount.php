@@ -1,22 +1,22 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\API;
+namespace FurqanSiddiqui\Cardano\API;
 
-use CardanoSL\CardanoSL;
-use CardanoSL\Exception\AmountException;
-use CardanoSL\Validate;
+use FurqanSiddiqui\Cardano\Cardano;
+use FurqanSiddiqui\Cardano\Exception\AmountException;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class LovelaceAmount
- * @package CardanoSL\API
+ * @package FurqanSiddiqui\Cardano\API
  */
-class LovelaceAmount extends \CardanoSL\Response\LovelaceAmount
+class LovelaceAmount extends \FurqanSiddiqui\Cardano\Response\LovelaceAmount
 {
     /**
      * LovelaceAmount constructor.
      * @param int $amount
-     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function __construct(int $amount = 0)
     {
@@ -25,26 +25,25 @@ class LovelaceAmount extends \CardanoSL\Response\LovelaceAmount
 
     /**
      * @param string $amount
-     * @return LovelaceAmount
+     * @return static
      * @throws AmountException
-     * @throws \CardanoSL\Exception\API_Exception
      */
     public static function ADA(string $amount): self
     {
-        if (!Validate::BcAmount($amount, CardanoSL::SCALE, false)) {
+        if (!Validate::BcAmount($amount, Cardano::SCALE, false)) {
             throw new AmountException('Invalid ADA amount');
         }
 
         $lovelaceAmount = new self();
         $lovelaceAmount->ada = $amount;
-        $lovelaceAmount->lovelace = intval(bcmul($amount, bcpow("10", strval(CardanoSL::SCALE), 0), CardanoSL::SCALE));
+        $lovelaceAmount->lovelace = intval(bcmul($amount, bcpow("10", strval(Cardano::SCALE), 0), Cardano::SCALE));
         return $lovelaceAmount;
     }
 
     /**
      * @param int $amount
-     * @return LovelaceAmount
-     * @throws \CardanoSL\Exception\API_Exception
+     * @return static
+     * @throws AmountException
      */
     public static function Lovelace(int $amount): self
     {

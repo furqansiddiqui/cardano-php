@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
 /**
  * Interface ResponseModelInterface
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 interface ResponseModelInterface
 {

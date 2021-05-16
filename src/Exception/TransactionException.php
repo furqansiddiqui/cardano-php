@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Exception;
+namespace FurqanSiddiqui\Cardano\Exception;
 
 /**
  * Class TransactionException
- * @package CardanoSL\Exception
+ * @package FurqanSiddiqui\Cardano\Exception
  */
 class TransactionException extends AccountException
 {

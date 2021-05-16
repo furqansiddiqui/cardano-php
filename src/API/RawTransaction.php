@@ -1,30 +1,30 @@
 <?php
+/** @noinspection PhpUnusedPrivateFieldInspection */
 declare(strict_types=1);
 
-namespace CardanoSL\API;
+namespace FurqanSiddiqui\Cardano\API;
 
-use CardanoSL\Exception\TransactionException;
-use CardanoSL\Validate;
+use FurqanSiddiqui\Cardano\Exception\TransactionException;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class RawTransaction
- * @package CardanoSL\API
+ * @package FurqanSiddiqui\Cardano\API
  * @property-read array $payees
  * @property-read string|null $groupingPolicy
  */
 class RawTransaction
 {
     /** @var array */
-    private $payees;
+    private array $payees = [];
     /** @var string|null */
-    private $groupingPolicy;
+    private ?string $groupingPolicy = null;
 
     /**
      * RawTransaction constructor.
      */
     public function __construct()
     {
-        $this->payees = [];
     }
 
     /**

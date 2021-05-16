@@ -1,50 +1,51 @@
 <?php
+/** @noinspection PhpUnusedPrivateFieldInspection */
 declare(strict_types=1);
 
-namespace CardanoSL\API\Wallets;
+namespace FurqanSiddiqui\Cardano\API\Wallets;
 
-use CardanoSL\CardanoSL;
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Exception\WalletException;
-use CardanoSL\Response\TransactionsList;
-use CardanoSL\Response\WalletInfo;
-use CardanoSL\Validate;
-use furqansiddiqui\BIP39\Mnemonic;
+use FurqanSiddiqui\BIP39\Mnemonic;
+use FurqanSiddiqui\Cardano\Cardano;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Exception\WalletException;
+use FurqanSiddiqui\Cardano\Response\TransactionsList;
+use FurqanSiddiqui\Cardano\Response\WalletInfo;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class Wallet
- * @package CardanoSL\API\Wallets
- * @property-read string $id
+ * @package FurqanSiddiqui\Cardano\API\Wallet
  * @property-read null|string $spendingPassword
+ * @property-read string $id
  * @property-read bool $hasInfoLoaded
  */
 class Wallet
 {
-    /** @var CardanoSL */
-    private $node;
+    /** @var Cardano */
+    private Cardano $node;
     /** @var string */
-    private $id;
+    private string $id;
     /** @var null|WalletInfo */
-    private $info;
+    private ?WalletInfo $info = null;
     /** @var null|Mnemonic */
-    private $mnemonic;
+    private ?Mnemonic $mnemonic = null;
     /** @var null|Accounts */
-    private $accounts;
+    private ?Accounts $accounts = null;
     /** @var null|string */
-    private $spendingPassword;
+    private ?string $spendingPassword = null;
 
     /** @var null|bool */
-    private $_isDeleted;
+    private ?bool $_isDeleted = null;
 
     /**
      * Wallet constructor.
-     * @param CardanoSL $node
+     * @param Cardano $node
      * @param string $id
      * @param WalletInfo|null $walletInfo
      * @param Mnemonic|null $mnemonic
      * @throws WalletException
      */
-    public function __construct(CardanoSL $node, string $id, ?WalletInfo $walletInfo = null, ?Mnemonic $mnemonic = null)
+    public function __construct(Cardano $node, string $id, ?WalletInfo $walletInfo = null, ?Mnemonic $mnemonic = null)
     {
         $this->node = $node;
         $this->id = $id;
@@ -79,20 +80,18 @@ class Wallet
             case "id":
                 return $this->id;
             case "hasInfoLoaded":
-                return $this->info ? true : false;
+                return isset($this->info);
         }
 
         throw new WalletException(sprintf('Cannot access unreadable prop "%s"', $prop));
     }
 
     /**
-     * Load walletInfo if not already loaded, this makes wallet further usable down the road
-     *
-     * @return Wallet
+     * @return $this
      * @throws API_ResponseException
      * @throws WalletException
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function load(): self
     {
@@ -103,10 +102,10 @@ class Wallet
     /**
      * @param bool $forceReload
      * @return WalletInfo
-     * @throws API_ResponseException
      * @throws WalletException
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function info(bool $forceReload = false): WalletInfo
     {
@@ -128,8 +127,8 @@ class Wallet
      * @return WalletInfo
      * @throws API_ResponseException
      * @throws WalletException
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function update(string $assuranceLevel, string $walletName): WalletInfo
     {
@@ -171,8 +170,8 @@ class Wallet
      * @return WalletInfo
      * @throws API_ResponseException
      * @throws WalletException
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function changePassword(string $newPassword, string $oldPassword, bool $hashPasswords = true): WalletInfo
     {
@@ -237,8 +236,8 @@ class Wallet
      * @param string|null $sortBy
      * @return TransactionsList
      * @throws API_ResponseException
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function transactions(int $page = 1, int $perPage = 10, ?string $idFilter = null, ?string $createdAtFilter = null, ?string $sortBy = null): TransactionsList
     {
@@ -261,22 +260,21 @@ class Wallet
         }
 
         $res = $this->node->http()->get('/api/v1/transactions', $payload);
-        $txList = new TransactionsList($res);
-        return $txList;
+        return new TransactionsList($res);
     }
 
     /**
      * @param int $accountIndex
      * @return Account
      * @throws API_ResponseException
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AccountException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AccountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function account(int $accountIndex): Account
     {
         $this->isWalletDeleted();
-
         return $this->accounts()->get($accountIndex);
     }
 

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Exception;
+namespace FurqanSiddiqui\Cardano\Exception;
 
 /**
  * Class API_ResponseException
- * @package CardanoSL\Exception
+ * @package FurqanSiddiqui\Cardano\Exception
  */
 class API_ResponseException extends API_Exception
 {

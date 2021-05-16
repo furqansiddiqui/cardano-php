@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Validate;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class TxInOut
@@ -12,24 +12,25 @@ use CardanoSL\Validate;
  */
 class TxInOut
 {
-    /** @var mixed|null */
-    public $address;
+    /** @var string|mixed */
+    public string $address;
     /** @var LovelaceAmount */
-    public $amount;
+    public LovelaceAmount $amount;
 
     /**
      * TxInOut constructor.
      * @param array $data
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function __construct(array $data)
     {
-        $this->address = $data["address"] ?? null;
-        if (!Validate::Address($this->address)) {
+        $address = $data["address"];
+        if (!Validate::Address($address)) {
             throw API_ResponseException::InvalidPropValue("txInOut.address");
         }
 
+        $this->address = $address;
         $this->amount = new LovelaceAmount($data["amount"]);
     }
 }

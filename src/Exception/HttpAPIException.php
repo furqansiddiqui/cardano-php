@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Exception;
+namespace FurqanSiddiqui\Cardano\Exception;
 
 /**
  * Class HttpAPIException
- * @package CardanoSL\Exception
+ * @package FurqanSiddiqui\Cardano\Exception
  */
-class HttpAPIException extends CardanoSLException
+class HttpAPIException extends CardanoException
 {
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace FurqanSiddiqui\Cardano\Exception;
 
 /**
- * Class AmountException
+ * Class CardanoException
  * @package FurqanSiddiqui\Cardano\Exception
  */
-class AmountException extends WalletException
+class CardanoException extends \Exception
 {
 }

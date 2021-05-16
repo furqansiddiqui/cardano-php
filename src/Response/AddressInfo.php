@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\Exception\API_Exception;
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Http\HttpJSONResponse;
-use CardanoSL\Validate;
+use FurqanSiddiqui\Cardano\Exception\API_Exception;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class AddressInfo
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class AddressInfo
 {
@@ -41,7 +41,7 @@ class AddressInfo
 
         $this->id = $data["id"] ?? null;
         if (!Validate::Address($this->id)) {
-            throw API_Exception::InvalidPropValue("addressInfo.id");
+            throw API_ResponseException::InvalidPropValue("addressInfo.id");
         }
 
         $this->changeAddress = $data["changeAddress"] ?? null;

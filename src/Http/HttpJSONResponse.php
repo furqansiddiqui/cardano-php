@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Http;
+namespace FurqanSiddiqui\Cardano\Http;
 
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Http\HttpJSONResponse\Meta;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta;
 
 /**
  * Class HttpJSONResponse
@@ -13,17 +13,17 @@ use CardanoSL\Http\HttpJSONResponse\Meta;
 class HttpJSONResponse
 {
     /** @var int */
-    public $httpCode;
+    public int $httpCode;
     /** @var array */
-    public $payload;
+    public array $payload;
+    /** @var null|array */
+    public ?array $headers;
     /** @var null|string */
-    public $headers;
-    /** @var null|string */
-    public $body;
+    public ?string $body;
     /** @var Meta */
-    public $meta;
+    public Meta $meta;
     /** @var string */
-    public $status;
+    public string $status;
 
     /**
      * HttpJSONResponse constructor.
@@ -54,8 +54,8 @@ class HttpJSONResponse
     public function validateAndPopulate(): self
     {
         // Check Status
-        $this->status = $this->payload["status"] ?? null;
-        $httpCodeStatus = $this->httpCode >= 200 && $this->httpCode < 300 ? true : false;
+        $this->status = strval($this->payload["status"]);
+        $httpCodeStatus = $this->httpCode >= 200 && $this->httpCode < 300;
 
         // API Error Handling
         if ($this->status !== "success" || !$httpCodeStatus) {

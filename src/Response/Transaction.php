@@ -1,72 +1,77 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Http\HttpJSONResponse;
-use CardanoSL\Validate;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class Transaction
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class Transaction implements ResponseModelInterface
 {
     /** @var string */
-    public $id;
+    public string $id;
     /** @var LovelaceAmount */
-    public $amount;
+    public LovelaceAmount $amount;
     /** @var int */
-    public $confirmations;
+    public int $confirmations;
     /** @var string */
-    public $creationTime;
+    public string $creationTime;
     /** @var string */
-    public $direction;
+    public string $direction;
     /** @var array */
-    public $inputs;
+    public array $inputs;
     /** @var array */
-    public $outputs;
+    public array $outputs;
     /** @var TxStatus */
-    public $status;
+    public TxStatus $status;
     /** @var string */
-    public $type;
+    public string $type;
 
     /**
      * Transaction constructor.
      * @param $data
      * @throws API_ResponseException
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function __construct($data)
     {
         if ($data instanceof HttpJSONResponse) {
-            $data = $data->payload["data"] ?? null;
+            $data = $data->payload["data"];
         }
 
         if (!is_array($data) || !$data) {
             throw API_ResponseException::RequirePropMissing("data");
         }
 
-        $this->id = $data["id"] ?? null;
-        if (!Validate::Hash64($this->id)) {
-            throw API_ResponseException::InvalidPropValue("tx.id", "Hash64", gettype($this->id));
+        $txId = $data["id"];
+        if (!Validate::Hash64($txId)) {
+            throw API_ResponseException::InvalidPropValue("tx.id", "Hash64", gettype($txId));
         }
 
-        $smallTxId = substr($this->id, 0, 6);
+        $smallTxId = substr($txId, 0, 6);
         $smallTxProp = sprintf("tx[%s...]", $smallTxId);
 
-        $this->amount = new LovelaceAmount($data["amount"] ?? null, $smallTxProp . "amount");
-        $this->confirmations = $data["confirmations"] ?? null;
-        if (!is_int($this->confirmations)) {
-            throw API_ResponseException::InvalidPropValue($smallTxProp . "confirmations", "int", gettype($this->confirmations));
+        $this->id = $txId;
+        $this->amount = new LovelaceAmount($data["amount"], $smallTxProp . "amount");
+        $confirmations = $data["confirmations"] ?? null;
+        if (!is_int($confirmations)) {
+            throw API_ResponseException::InvalidPropValue($smallTxProp . "confirmations", "int", gettype($confirmations));
         }
 
-        $this->creationTime = $data["creationTime"] ?? null;
-        if (!is_string($this->creationTime)) {
+        $this->confirmations = $confirmations;
+
+        $creationTime = $data["creationTime"] ?? null;
+        if (!is_string($creationTime)) {
             throw API_ResponseException::InvalidPropValue($smallTxProp . "creationTime");
         }
+
+        $this->creationTime = $creationTime;
 
         $this->direction = strtolower(strval($data["direction"] ?? ""));
         if (!in_array($this->direction, ["outgoing", "incoming"])) {

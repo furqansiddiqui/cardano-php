@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\CardanoSL;
-use CardanoSL\Exception\AmountException;
+use FurqanSiddiqui\Cardano\Cardano;
+use FurqanSiddiqui\Cardano\Exception\AmountException;
 
 /**
  * Class LovelaceAmount
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class LovelaceAmount implements ResponseModelInterface
 {
     /** @var int */
-    public $lovelace;
+    public int $lovelace;
     /** @var string */
-    public $ada;
+    public string $ada;
 
     /**
      * LovelaceAmount constructor.
@@ -31,11 +31,11 @@ class LovelaceAmount implements ResponseModelInterface
 
         if (!is_int($lovelaceAmount)) {
             throw new AmountException($which . 'Lovelace amount must be an integer');
-        } elseif ($lovelaceAmount > CardanoSL::MAX_LOVELACE) {
-            throw new AmountException($which . sprintf('Lovelace amount cannot exceed %d', CardanoSL::MAX_LOVELACE));
+        } elseif ($lovelaceAmount > Cardano::MAX_LOVELACE) {
+            throw new AmountException($which . sprintf('Lovelace amount cannot exceed %d', Cardano::MAX_LOVELACE));
         }
 
         $this->lovelace = $lovelaceAmount;
-        $this->ada = bcdiv(strval($this->lovelace), bcpow("10", strval(CardanoSL::SCALE), 0), CardanoSL::SCALE);
+        $this->ada = (string)bcdiv(strval($this->lovelace), bcpow("10", strval(Cardano::SCALE), 0), Cardano::SCALE);
     }
 }

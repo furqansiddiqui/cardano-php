@@ -1,17 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Http;
+namespace FurqanSiddiqui\Cardano\Http;
 
-use CardanoSL\Exception\API_Exception;
-use CardanoSL\Exception\HttpAPIException;
+use FurqanSiddiqui\Cardano\Exception\HttpAPIException;
 use HttpClient\Request;
 use HttpClient\Response\JSONResponse;
 use HttpClient\Response\Response;
 
 /**
  * Class CardanoHttpAPI
- * @package CardanoSL\Http
+ * @package FurqanSiddiqui\Cardano\Http
  */
 class CardanoHttpAPI extends AbstractHttpClient
 {
@@ -20,8 +19,8 @@ class CardanoHttpAPI extends AbstractHttpClient
      * @param string $endpoint
      * @param array|null $payload
      * @return HttpJSONResponse
-     * @throws API_Exception
      * @throws HttpAPIException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
      * @throws \HttpClient\Exception\HttpClientException
      * @throws \HttpClient\Exception\RequestException
      * @throws \HttpClient\Exception\ResponseException
@@ -50,13 +49,11 @@ class CardanoHttpAPI extends AbstractHttpClient
         }
 
         if ($res instanceof JSONResponse) {
-            $jsonResponse = new HttpJSONResponse(
+            return new HttpJSONResponse(
                 $res->code(),
                 $res->array(),
                 $res->headers()
             );
-
-            return $jsonResponse;
         }
 
         throw new HttpAPIException('No response was received');

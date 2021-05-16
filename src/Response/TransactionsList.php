@@ -1,38 +1,36 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Http\HttpJSONResponse;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta\Pagination;
 
 /**
  * Class TransactionsList
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class TransactionsList implements \Iterator, \Countable, ResponseModelInterface
 {
     /** @var int */
-    private $pos;
+    private int $pos = 0;
     /** @var int */
-    private $count;
+    private int $count = 0;
     /** @var array */
-    private $txs;
-    /** @var HttpJSONResponse\Meta\Pagination */
-    private $pagination;
+    private array $txs = [];
+    /** @var Pagination */
+    private Pagination $pagination;
 
     /**
      * TransactionsList constructor.
      * @param HttpJSONResponse $res
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function __construct(HttpJSONResponse $res)
     {
-        $this->pos = 0;
-        $this->count = 0;
-        $this->txs = [];
         $this->pagination = $res->meta->pagination;
 
         $transactions = $res->payload["data"] ?? null;

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Exception;
+namespace FurqanSiddiqui\Cardano\Exception;
 
 /**
  * Class WalletException
- * @package CardanoSL\Exception
+ * @package FurqanSiddiqui\Cardano\Exception
  */
 class WalletException extends API_Exception
 {

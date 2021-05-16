@@ -1,36 +1,36 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Validate;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class WalletSyncState
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class WalletSyncState implements ResponseModelInterface
 {
     /** @var string */
-    public $tag;
+    public string $tag;
     /** @var null|QuantityUnitBlock */
-    public $estimatedCompletionTime;
+    public ?QuantityUnitBlock $estimatedCompletionTime = null;
     /** @var null|QuantityUnitBlock */
-    public $percentage;
+    public ?QuantityUnitBlock $percentage = null;
     /** @var null|QuantityUnitBlock */
-    public $throughput;
+    public ?QuantityUnitBlock $throughput = null;
 
     /**
      * @param array $block
-     * @return WalletSyncState
+     * @return static
      * @throws API_ResponseException
-     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
      */
     public static function Construct(array $block): self
     {
         $syncState = new self();
-        $syncState->tag = $block["tag"] ?? null;
+        $syncState->tag = strval($block["tag"]);
         if (!Validate::SyncStateTag($syncState->tag)) {
             throw API_ResponseException::InvalidPropValue("wallet.syncState.Tag");
         }

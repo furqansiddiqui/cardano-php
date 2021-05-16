@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Http\HttpJSONResponse;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta\Pagination;
 
 /**
  * Class WalletsList
@@ -13,26 +14,23 @@ use CardanoSL\Http\HttpJSONResponse;
 class WalletsList implements \Iterator, \Countable, ResponseModelInterface
 {
     /** @var int */
-    private $pos;
+    private int $pos = 0;
     /** @var int */
-    private $count;
+    private int $count = 0;
     /** @var array */
-    private $wallets;
-    /** @var HttpJSONResponse\Meta\Pagination */
-    private $pagination;
+    private array $wallets = [];
+    /** @var Pagination */
+    private Pagination $pagination;
 
     /**
      * WalletsList constructor.
      * @param HttpJSONResponse $res
      * @throws API_ResponseException
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function __construct(HttpJSONResponse $res)
     {
-        $this->pos = 0;
-        $this->count = 0;
-        $this->wallets = [];
         $this->pagination = $res->meta->pagination;
 
         $wallets = $res->payload["data"] ?? null;

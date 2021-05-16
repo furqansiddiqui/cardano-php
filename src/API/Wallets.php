@@ -1,33 +1,33 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\API;
+namespace FurqanSiddiqui\Cardano\API;
 
-use CardanoSL\API\Wallets\Wallet;
-use CardanoSL\CardanoSL;
-use CardanoSL\Exception\API_Exception;
-use CardanoSL\Response\WalletInfo;
-use CardanoSL\Response\WalletsList;
-use CardanoSL\Validate;
-use furqansiddiqui\BIP39\BIP39;
-use furqansiddiqui\BIP39\Mnemonic;
+use FurqanSiddiqui\BIP39\BIP39;
+use FurqanSiddiqui\BIP39\Mnemonic;
+use FurqanSiddiqui\Cardano\API\Wallets\Wallet;
+use FurqanSiddiqui\Cardano\Cardano;
+use FurqanSiddiqui\Cardano\Exception\API_Exception;
+use FurqanSiddiqui\Cardano\Response\WalletInfo;
+use FurqanSiddiqui\Cardano\Response\WalletsList;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class Wallets
- * @package CardanoSL\API
+ * @package FurqanSiddiqui\Cardano\API
  */
 class Wallets
 {
-    /** @var CardanoSL */
-    private $node;
+    /** @var Cardano */
+    private Cardano $node;
     /** @var array */
-    private $walletInstances;
+    private array $walletInstances;
 
     /**
      * Wallets constructor.
-     * @param CardanoSL $node
+     * @param Cardano $node
      */
-    public function __construct(CardanoSL $node)
+    public function __construct(Cardano $node)
     {
         $this->node = $node;
         $this->walletInstances = [];
@@ -49,7 +49,8 @@ class Wallets
      * @param string $sortBy
      * @return WalletsList
      * @throws API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function list(int $page = 1, int $perPage = 50, ?string $filterId = null, ?string $filterBalance = null, string $sortBy = "created_at"): WalletsList
     {
@@ -85,7 +86,7 @@ class Wallets
      * @param string $walletId
      * @param bool $forceInstanceRefresh
      * @return Wallet
-     * @throws \CardanoSL\Exception\WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
     public function wallet(string $walletId, bool $forceInstanceRefresh = false): Wallet
     {
@@ -110,7 +111,7 @@ class Wallets
      * @param string $walletId
      * @param bool $forceInstanceRefresh
      * @return Wallet
-     * @throws \CardanoSL\Exception\WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
     public function get(string $walletId, bool $forceInstanceRefresh = false): Wallet
     {
@@ -119,8 +120,8 @@ class Wallets
 
     /**
      * @return Mnemonic
-     * @throws \furqansiddiqui\BIP39\Exception\MnemonicException
-     * @throws \furqansiddiqui\BIP39\Exception\WordlistException
+     * @throws \FurqanSiddiqui\BIP39\Exception\MnemonicException
+     * @throws \FurqanSiddiqui\BIP39\Exception\WordListException
      */
     public function generateMnemonicCodes(): Mnemonic
     {
@@ -135,8 +136,9 @@ class Wallets
      * @param bool $hashPassword
      * @return Wallet
      * @throws API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
     public function create(string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $hashPassword = true): Wallet
     {
@@ -151,8 +153,9 @@ class Wallets
      * @param bool $hashPassword
      * @return Wallet
      * @throws API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
     public function restore(string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $hashPassword = true): Wallet
     {
@@ -168,8 +171,9 @@ class Wallets
      * @param bool $hashPassword
      * @return Wallet
      * @throws API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
     private function createOrRestore(string $op, string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $hashPassword = true): Wallet
     {

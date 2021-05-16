@@ -1,25 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
 
 /**
  * Class QuantityUnitBlock
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class QuantityUnitBlock
 {
     /** @var int */
-    public $quantity;
+    public int $quantity;
     /** @var string */
-    public $unit;
+    public string $unit;
 
     /**
      * @param string $which
-     * @param array $block
-     * @return QuantityUnitBlock
+     * @param array|null $block
+     * @return static
      * @throws API_ResponseException
      */
     public static function Construct(string $which, ?array $block = null): self

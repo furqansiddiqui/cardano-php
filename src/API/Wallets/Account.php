@@ -1,52 +1,51 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\API\Wallets;
+namespace FurqanSiddiqui\Cardano\API\Wallets;
 
-use CardanoSL\API\RawTransaction;
-use CardanoSL\CardanoSL;
-use CardanoSL\Exception\AccountException;
-use CardanoSL\Exception\API_Exception;
-use CardanoSL\Exception\TransactionException;
-use CardanoSL\Response\AccountInfo;
-use CardanoSL\Response\AddressesList;
-use CardanoSL\Response\AddressInfo;
-use CardanoSL\Response\LovelaceAmount;
-use CardanoSL\Response\Transaction;
-use CardanoSL\Response\TransactionsList;
-use CardanoSL\Validate;
+use FurqanSiddiqui\Cardano\API\RawTransaction;
+use FurqanSiddiqui\Cardano\Cardano;
+use FurqanSiddiqui\Cardano\Exception\AccountException;
+use FurqanSiddiqui\Cardano\Exception\TransactionException;
+use FurqanSiddiqui\Cardano\Response\AccountInfo;
+use FurqanSiddiqui\Cardano\Response\AddressesList;
+use FurqanSiddiqui\Cardano\Response\AddressInfo;
+use FurqanSiddiqui\Cardano\Response\LovelaceAmount;
+use FurqanSiddiqui\Cardano\Response\Transaction;
+use FurqanSiddiqui\Cardano\Response\TransactionsList;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class Account
- * @package CardanoSL\API\Wallets
+ * @package FurqanSiddiqui\Cardano\API\Wallets
  */
 class Account
 {
-    /** @var CardanoSL */
-    private $node;
+    /** @var Cardano */
+    private Cardano $node;
     /** @var Wallet */
-    private $wallet;
+    private Wallet $wallet;
     /** @var int */
-    private $accountIndex;
+    private int $accountIndex;
     /** @var null|AccountInfo */
-    private $info;
+    private ?AccountInfo $info = null;
 
     /** @var null|bool */
-    private $_isDeleted;
+    private ?bool $_isDeleted = null;
 
     /**
      * Account constructor.
-     * @param CardanoSL $node
+     * @param Cardano $node
      * @param Wallet $wallet
      * @param int $accountIndex
      * @param bool $preloadInfo
      * @param AccountInfo|null $info
-     * @throws API_Exception
      * @throws AccountException
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
-    public function __construct(CardanoSL $node, Wallet $wallet, int $accountIndex, bool $preloadInfo = true, ?AccountInfo $info = null)
+    public function __construct(Cardano $node, Wallet $wallet, int $accountIndex, bool $preloadInfo = true, ?AccountInfo $info = null)
     {
         self::isValidIndex($accountIndex);
 
@@ -90,11 +89,10 @@ class Account
     /**
      * @param RawTransaction $tx
      * @return Transaction
-     * @throws API_Exception
      * @throws TransactionException
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AmountException
-     * @throws \CardanoSL\Exception\WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function spend(RawTransaction $tx): Transaction
     {
@@ -145,11 +143,11 @@ class Account
 
     /**
      * @return AddressInfo
-     * @throws API_Exception
      * @throws AccountException
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AmountException
-     * @throws \CardanoSL\Exception\WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
     public function createAddress(): AddressInfo
     {
@@ -179,8 +177,8 @@ class Account
      * @param int $perPage
      * @param string|null $addressFilter
      * @return AddressesList
-     * @throws API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
      */
     public function addresses(int $page = 1, int $perPage = 10, ?string $addressFilter = null): AddressesList
     {
@@ -205,9 +203,9 @@ class Account
      * @param string|null $createdAtFilter
      * @param string|null $sortBy
      * @return TransactionsList
-     * @throws API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function transactions(int $page = 1, int $perPage = 10, ?string $idFilter = null, ?string $createdAtFilter = null, ?string $sortBy = null): TransactionsList
     {
@@ -231,13 +229,12 @@ class Account
         }
 
         $res = $this->node->http()->get('/api/v1/transactions', $payload);
-        $txList = new TransactionsList($res);
-        return $txList;
+        return new TransactionsList($res);
     }
 
     /**
      * @return LovelaceAmount
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function balance(): LovelaceAmount
     {
@@ -249,9 +246,9 @@ class Account
     /**
      * @param bool $forceReload
      * @return AccountInfo
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function info(bool $forceReload = false): AccountInfo
     {
@@ -268,10 +265,10 @@ class Account
     /**
      * @param string|null $newName
      * @return AccountInfo
-     * @throws API_Exception
      * @throws AccountException
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function update(string $newName = null): AccountInfo
     {

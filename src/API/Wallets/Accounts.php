@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\API\Wallets;
+namespace FurqanSiddiqui\Cardano\API\Wallets;
 
-use CardanoSL\CardanoSL;
-use CardanoSL\Exception\AccountException;
-use CardanoSL\Exception\API_Exception;
-use CardanoSL\Response\AccountInfo;
-use CardanoSL\Response\AccountsList;
-use CardanoSL\Validate;
+use FurqanSiddiqui\Cardano\Cardano;
+use FurqanSiddiqui\Cardano\Exception\AccountException;
+use FurqanSiddiqui\Cardano\Exception\API_Exception;
+use FurqanSiddiqui\Cardano\Response\AccountInfo;
+use FurqanSiddiqui\Cardano\Response\AccountsList;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class Accounts
@@ -16,21 +16,21 @@ use CardanoSL\Validate;
  */
 class Accounts
 {
-    /** @var CardanoSL */
-    private $node;
+    /** @var Cardano */
+    private Cardano $node;
     /** @var Wallet */
-    private $wallet;
+    private Wallet $wallet;
     /** @var array */
-    private $accountInstances;
+    private array $accountInstances;
     /** @var null|int */
-    private $firstAccountIndex;
+    private ?int $firstAccountIndex = null;
 
     /**
      * Accounts constructor.
-     * @param CardanoSL $node
+     * @param Cardano $node
      * @param Wallet $wallet
      */
-    public function __construct(CardanoSL $node, Wallet $wallet)
+    public function __construct(Cardano $node, Wallet $wallet)
     {
         $this->node = $node;
         $this->wallet = $wallet;
@@ -41,9 +41,9 @@ class Accounts
      * @param int $page
      * @param int $perPage
      * @return AccountsList
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function list(int $page = 1, int $perPage = 10): AccountsList
     {
@@ -67,9 +67,8 @@ class Accounts
     /**
      * @return Account
      * @throws API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AccountException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function primary(): Account
     {
@@ -91,10 +90,10 @@ class Accounts
      * @param bool $forceInstanceRefresh
      * @param bool $preloadInfo
      * @return Account
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AccountException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AccountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function account(int $accountIndex, bool $forceInstanceRefresh = false, bool $preloadInfo = true): Account
     {
@@ -103,7 +102,7 @@ class Accounts
         // Search existing instance
         if (!$forceInstanceRefresh) {
             foreach ($this->accountInstances as $id => $instance) {
-                if ($accountIndex === strval($id)) {
+                if (strval($accountIndex) === strval($id)) {
                     return $instance;
                 }
             }
@@ -120,9 +119,8 @@ class Accounts
      * @return Account
      * @throws API_Exception
      * @throws AccountException
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AmountException
-     * @throws \CardanoSL\Exception\WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function create(string $name): Account
     {
@@ -159,10 +157,10 @@ class Accounts
      * @param bool $forceInstanceRefresh
      * @param bool $preloadInfo
      * @return Account
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\API_ResponseException
-     * @throws \CardanoSL\Exception\AccountException
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws API_Exception
+     * @throws AccountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function get(int $accountIndex, bool $forceInstanceRefresh = false, bool $preloadInfo = true): Account
     {

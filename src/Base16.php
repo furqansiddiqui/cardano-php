@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL;
+namespace FurqanSiddiqui\Cardano;
 
 /**
  * Class Base16
- * @package CardanoSL
+ * @package FurqanSiddiqui\Cardano
  */
 class Base16
 {

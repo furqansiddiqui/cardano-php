@@ -1,33 +1,33 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response {
+namespace FurqanSiddiqui\Cardano\Response {
 
-    use CardanoSL\Exception\API_ResponseException;
-    use CardanoSL\Http\HttpJSONResponse;
-    use CardanoSL\Response\NodeInfo\localTimeInformation;
+    use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+    use FurqanSiddiqui\Cardano\Http\HttpJSONResponse;
+    use FurqanSiddiqui\Cardano\Response\NodeInfo\LocalTimeInformation;
 
     /**
      * Class NodeInfo
-     * @package CardanoSL\Response
+     * @package FurqanSiddiqui\Cardano\Response
      */
     class NodeInfo implements ResponseModelInterface
     {
         /** @var QuantityUnitBlock */
-        public $syncProgress;
+        public QuantityUnitBlock $syncProgress;
         /** @var QuantityUnitBlock */
-        public $blockchainHeight;
+        public QuantityUnitBlock $blockchainHeight;
         /** @var QuantityUnitBlock */
-        public $localBlockchainHeight;
+        public QuantityUnitBlock $localBlockchainHeight;
         /** @var LocalTimeInformation */
-        public $localTimeInformation;
+        public LocalTimeInformation $localTimeInformation;
         /** @var array */
         public $subscriptionStatus;
 
         /**
          * NodeInfo constructor.
          * @param HttpJSONResponse $res
-         * @throws \CardanoSL\Exception\API_ResponseException
+         * @throws API_ResponseException
          */
         public function __construct(HttpJSONResponse $res)
         {
@@ -49,19 +49,19 @@ namespace CardanoSL\Response {
     }
 }
 
-namespace CardanoSL\Response\NodeInfo {
+namespace FurqanSiddiqui\Cardano\Response\NodeInfo {
 
-    use CardanoSL\Response\QuantityUnitBlock;
-    use CardanoSL\Response\ResponseModelInterface;
+    use FurqanSiddiqui\Cardano\Response\QuantityUnitBlock;
+    use FurqanSiddiqui\Cardano\Response\ResponseModelInterface;
 
     /**
-     * Class localTimeInformation
-     * @package CardanoSL\Response\NodeInfo
+     * Class LocalTimeInformation
+     * @package FurqanSiddiqui\Cardano\Response\NodeInfo
      */
     class LocalTimeInformation implements ResponseModelInterface
     {
         /** @var QuantityUnitBlock */
-        public $differenceFromNtpServer;
+        public QuantityUnitBlock $differenceFromNtpServer;
     }
 }
 

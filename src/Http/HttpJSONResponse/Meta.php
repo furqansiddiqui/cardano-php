@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Http\HttpJSONResponse;
+namespace FurqanSiddiqui\Cardano\Http\HttpJSONResponse;
 
-use CardanoSL\Http\HttpJSONResponse\Meta\Pagination;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta\Pagination;
 
 /**
  * Class Meta
- * @package CardanoSL\Http\HttpJSONResponse
+ * @package FurqanSiddiqui\Cardano\Http\HttpJSONResponse
  */
 class Meta
 {
     /** @var Pagination */
-    public $pagination;
+    public Pagination $pagination;
 
     /**
      * Meta constructor.

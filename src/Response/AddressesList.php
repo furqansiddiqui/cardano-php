@@ -1,38 +1,35 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Http\HttpJSONResponse\Meta\Pagination;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta\Pagination;
 
 /**
  * Class AddressesList
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class AddressesList implements \Iterator, \Countable, ResponseModelInterface
 {
     /** @var int */
-    private $pos;
+    private int $pos = 0;
     /** @var int */
-    private $count;
+    private int $count = 0;
     /** @var array */
-    private $addresses;
+    private array $addresses = [];
     /** @var Pagination|null */
-    private $pagination;
+    private ?Pagination $pagination;
 
     /**
      * AddressesList constructor.
      * @param $list
      * @param Pagination|null $pagination
      * @throws API_ResponseException
-     * @throws \CardanoSL\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
      */
     public function __construct($list, ?Pagination $pagination = null)
     {
-        $this->pos = 0;
-        $this->count = 0;
-        $this->addresses = [];
         $this->pagination = $pagination;
 
         if (!is_array($list)) {

@@ -1,31 +1,30 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Http;
+namespace FurqanSiddiqui\Cardano\Http;
 
 use HttpClient\Request;
 
 /**
  * Class TLS
- * @package CardanoSL\Http
+ * @package FurqanSiddiqui\Cardano\Http
  */
 class TLS
 {
     /** @var bool */
-    private $verify;
+    private bool $verify = true;
     /** @var null|string */
-    private $cert;
+    private ?string $cert = null;
     /** @var null|string */
-    private $privateKey;
+    private ?string $privateKey = null;
     /** @var null|string */
-    private $ca;
+    private ?string $ca = null;
 
     /**
      * TLS constructor.
      */
     public function __construct()
     {
-        $this->verify = true;
     }
 
     /**

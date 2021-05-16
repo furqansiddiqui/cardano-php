@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Exception;
+namespace FurqanSiddiqui\Cardano\Exception;
 
 /**
  * Class API_Exception
- * @package CardanoSL\Exception
+ * @package FurqanSiddiqui\Cardano\Exception
  */
-class API_Exception extends CardanoSLException
+class API_Exception extends CardanoException
 {
     /**
      * @param string $which

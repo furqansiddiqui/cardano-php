@@ -1,24 +1,24 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Http\HttpJSONResponse\Meta;
+namespace FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta;
 
-use CardanoSL\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
 
 /**
  * Class Pagination
- * @package CardanoSL\Http\HttpJSONResponse\Meta
+ * @package FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta
  */
 class Pagination
 {
     /** @var int */
-    public $totalPages;
+    public int $totalPages;
     /** @var int */
-    public $page;
+    public int $page;
     /** @var int */
-    public $perPage;
+    public int $perPage;
     /** @var int */
-    public $totalEntries;
+    public int $totalEntries;
 
     /**
      * @param array $paginationBlock

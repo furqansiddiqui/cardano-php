@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL;
-
-use CardanoSL\Exception\API_Exception;
+namespace FurqanSiddiqui\Cardano;
 
 /**
  * Class Validate
@@ -81,7 +79,7 @@ class Validate
     {
         if (!is_int($index)) {
             return false;
-        } elseif ($index < CardanoSL::MIN_ACCOUNTS_INDEX || $index > CardanoSL::MAX_ACCOUNTS_INDEX) {
+        } elseif ($index < Cardano::MIN_ACCOUNTS_INDEX || $index > Cardano::MAX_ACCOUNTS_INDEX) {
             return false;
         }
 
@@ -96,14 +94,6 @@ class Validate
     {
         return is_string($name) && preg_match('/^[\w\s.\-:]{1,32}$/', $name);
     }
-
-    /**
-     * @param $amount
-     * @param string|null $which
-     * @return bool
-     * @throws API_Exception
-     */
-
 
     /**
      * @param $amount

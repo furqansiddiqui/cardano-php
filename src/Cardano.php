@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL;
+namespace FurqanSiddiqui\Cardano;
 
-use CardanoSL\API\Wallets;
-use CardanoSL\Exception\AddressException;
-use CardanoSL\Http\AbstractHttpClient;
-use CardanoSL\Http\CardanoHttpAPI;
-use CardanoSL\Response\AddressesList;
-use CardanoSL\Response\AddressInfo;
-use CardanoSL\Response\NodeInfo;
+use FurqanSiddiqui\Cardano\API\Wallets;
+use FurqanSiddiqui\Cardano\Exception\AddressException;
+use FurqanSiddiqui\Cardano\Http\AbstractHttpClient;
+use FurqanSiddiqui\Cardano\Http\CardanoHttpAPI;
+use FurqanSiddiqui\Cardano\Response\AddressesList;
+use FurqanSiddiqui\Cardano\Response\AddressInfo;
+use FurqanSiddiqui\Cardano\Response\NodeInfo;
 
 /**
- * Class CardanoSL
- * @package CardanoSL
+ * Class Cardano
+ * @package FurqanSiddiqui\Cardano
  */
-class CardanoSL
+class Cardano
 {
     public const SCALE = 6;
     public const MAX_LOVELACE = 45000000000000000;
@@ -23,13 +23,13 @@ class CardanoSL
     public const MAX_ACCOUNTS_INDEX = 4294967295;
 
     /** @var AbstractHttpClient */
-    private $httpClient;
+    private AbstractHttpClient $httpClient;
     /** @var string */
-    private $host;
+    private string $host;
     /** @var int */
-    private $port;
+    private int $port;
     /** @var null|Wallets */
-    private $_api_Wallets;
+    private ?Wallets $_api_Wallets = null;
 
     /**
      * CardanoSL constructor.
@@ -45,6 +45,7 @@ class CardanoSL
 
         $this->host = $host;
         $this->port = $port;
+        /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
         $this->httpClient = $httpClient;
     }
 

@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Http;
+namespace FurqanSiddiqui\Cardano\Http;
 
 /**
  * Class AbstractHttpClient
- * @package CardanoSL\Http
+ * @package FurqanSiddiqui\Cardano\Http
  */
 abstract class AbstractHttpClient
 {
     /** @var string */
-    protected $host;
+    protected string $host;
     /** @var int */
-    protected $port;
+    protected int $port;
     /** @var null|TLS */
-    protected $tls;
+    protected ?TLS $tls = null;
 
     /**
      * AbstractHttpClient constructor.

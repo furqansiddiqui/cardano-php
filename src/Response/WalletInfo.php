@@ -1,43 +1,43 @@
 <?php
 declare(strict_types=1);
 
-namespace CardanoSL\Response;
+namespace FurqanSiddiqui\Cardano\Response;
 
-use CardanoSL\Exception\API_ResponseException;
-use CardanoSL\Http\HttpJSONResponse;
-use CardanoSL\Validate;
+use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
+use FurqanSiddiqui\Cardano\Http\HttpJSONResponse;
+use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class WalletInfo
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class WalletInfo implements ResponseModelInterface
 {
     /** @var string */
-    public $assuranceLevel;
+    public string $assuranceLevel;
     /** @var LovelaceAmount */
-    public $balance;
+    public LovelaceAmount $balance;
     /** @var string */
-    public $createdAt;
-    /** @var bool */
-    public $hasSpendingPassword;
+    public string $createdAt;
+    /** @var bool|null */
+    public ?bool $hasSpendingPassword = null;
     /** @var string */
-    public $id;
-    /** @var string */
-    public $name;
+    public string $id;
     /** @var string|null */
-    public $spendingPasswordLastUpdate;
+    public ?string $name = null;
+    /** @var string|null */
+    public ?string $spendingPasswordLastUpdate = null;
     /** @var WalletSyncState */
-    public $syncState;
+    public WalletSyncState $syncState;
     /** @var string */
-    public $type;
+    public string $type;
 
     /**
      * WalletInfo constructor.
      * @param $data
      * @throws API_ResponseException
-     * @throws \CardanoSL\Exception\API_Exception
-     * @throws \CardanoSL\Exception\AmountException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
     public function __construct($data)
     {
@@ -49,23 +49,26 @@ class WalletInfo implements ResponseModelInterface
             throw API_ResponseException::RequirePropMissing("data");
         }
 
-        $this->id = Validate::WalletIdentifier($data["id"] ?? null) ? $data["id"] : null;
-        if (!$this->id) {
+        $walletId = $data["id"];
+        if (!Validate::WalletIdentifier($walletId)) {
             throw API_ResponseException::InvalidPropValue("wallet.id");
         }
 
-        $this->assuranceLevel = $data["assuranceLevel"] ?? null;
-        if (!Validate::AssuranceLevel($this->assuranceLevel)) {
+        $this->id = $walletId;
+
+        $assuranceLevel = $data["assuranceLevel"];
+        if (!Validate::AssuranceLevel($assuranceLevel)) {
             throw API_ResponseException::InvalidPropValue("wallet.assuranceLevel");
         }
 
+        $this->assuranceLevel = $assuranceLevel;
         $this->balance = new LovelaceAmount($data["balance"] ?? null, "wallet.Balance");
-        $this->createdAt = $data["createdAt"] ?? null;
+        $this->createdAt = $data["createdAt"];
         $this->hasSpendingPassword = array_key_exists("hasSpendingPassword", $data) && is_bool($data["hasSpendingPassword"]) ?
             $data["hasSpendingPassword"] : null;
         $this->name = $data["name"] ?? null;
         $this->spendingPasswordLastUpdate = $data["spendingPasswordLastUpdate"] ?? null;
-        $this->type = $data["type"] ?? null;
+        $this->type = strval($data["type"]);
 
         $syncState = $data["syncState"] ?? null;
         if (!is_array($syncState) || !$syncState) {
