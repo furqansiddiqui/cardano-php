@@ -56,7 +56,7 @@ class HttpJSONResponse
     }
 
     /**
-     * @return array|null
+     * @return array
      */
     public function data(): array
     {

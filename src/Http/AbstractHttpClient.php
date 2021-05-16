@@ -67,47 +67,52 @@ abstract class AbstractHttpClient
      * @param string $method
      * @param string $endpoint
      * @param array|null $payload
+     * @param bool $reqJSONBody
      * @return HttpJSONResponse
      */
-    abstract public function call(string $method, string $endpoint, ?array $payload = null): HttpJSONResponse;
+    abstract public function call(string $method, string $endpoint, ?array $payload = null, bool $reqJSONBody = true): HttpJSONResponse;
 
     /**
      * @param string $endpoint
      * @param array|null $payload
+     * @param bool $reqJSONBody
      * @return HttpJSONResponse
      */
-    public function get(string $endpoint, ?array $payload = null): HttpJSONResponse
+    public function get(string $endpoint, ?array $payload = null, bool $reqJSONBody = true): HttpJSONResponse
     {
-        return $this->call("GET", $endpoint, $payload);
+        return $this->call("GET", $endpoint, $payload, $reqJSONBody);
     }
 
     /**
      * @param string $endpoint
      * @param array|null $payload
+     * @param bool $reqJSONBody
      * @return HttpJSONResponse
      */
-    public function post(string $endpoint, ?array $payload = null): HttpJSONResponse
+    public function post(string $endpoint, ?array $payload = null, bool $reqJSONBody = true): HttpJSONResponse
     {
-        return $this->call("POST", $endpoint, $payload);
+        return $this->call("POST", $endpoint, $payload, $reqJSONBody);
     }
 
     /**
      * @param string $endpoint
      * @param array|null $payload
+     * @param bool $reqJSONBody
      * @return HttpJSONResponse
      */
-    public function put(string $endpoint, ?array $payload = null): HttpJSONResponse
+    public function put(string $endpoint, ?array $payload = null, bool $reqJSONBody = true): HttpJSONResponse
     {
-        return $this->call("PUT", $endpoint, $payload);
+        return $this->call("PUT", $endpoint, $payload, $reqJSONBody);
     }
 
     /**
      * @param string $endpoint
      * @param array|null $payload
+     * @param bool $reqJSONBody
      * @return HttpJSONResponse
      */
-    public function delete(string $endpoint, ?array $payload = null): HttpJSONResponse
+    public function delete(string $endpoint, ?array $payload = null, bool $reqJSONBody = false): HttpJSONResponse
     {
-        return $this->call("DELETE", $endpoint, $payload);
+        return $this->call("DELETE", $endpoint, $payload, $reqJSONBody);
     }
 }

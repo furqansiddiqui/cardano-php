@@ -18,6 +18,7 @@ class CardanoHttpAPI extends AbstractHttpClient
      * @param string $method
      * @param string $endpoint
      * @param array|null $payload
+     * @param bool $reqJSONBody
      * @return HttpJSONResponse
      * @throws HttpAPIException
      * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
@@ -26,7 +27,7 @@ class CardanoHttpAPI extends AbstractHttpClient
      * @throws \HttpClient\Exception\ResponseException
      * @throws \HttpClient\Exception\SSLException
      */
-    public function call(string $method, string $endpoint, ?array $payload = null): HttpJSONResponse
+    public function call(string $method, string $endpoint, ?array $payload = null, bool $reqJSONBody = true): HttpJSONResponse
     {
         $req = new Request($method, $this->url($endpoint));
         if ($this->tls) {
@@ -39,13 +40,15 @@ class CardanoHttpAPI extends AbstractHttpClient
 
         $res = $req->send();
         if ($res instanceof Response) {
-            $body = $res->body();
-            $bodyLen = mb_strlen($body);
-            if ($bodyLen > 1 && $bodyLen < 256) {
-                throw new HttpAPIException(strip_tags($body), $res->code());
-            }
+            if ($reqJSONBody) {
+                $body = $res->body();
+                $bodyLen = mb_strlen($body);
+                if ($bodyLen > 1 && $bodyLen < 256) {
+                    throw new HttpAPIException(strip_tags($body), $res->code());
+                }
 
-            throw new HttpAPIException(sprintf('Got non-JSON response with HTTP code %d', $res->code()));
+                throw new HttpAPIException(sprintf('Got non-JSON response with HTTP code %d', $res->code()));
+            }
         }
 
         if ($res instanceof JSONResponse) {

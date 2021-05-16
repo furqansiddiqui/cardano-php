@@ -42,31 +42,14 @@ class Wallets
     }
 
     /**
-     * @param int $page
-     * @param int $perPage
-     * @param string|null $filterId
-     * @param string|null $filterBalance
-     * @param string $sortBy
      * @return WalletsList
      * @throws API_Exception
      * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
-    public function list(int $page = 1, int $perPage = 50, ?string $filterId = null, ?string $filterBalance = null, string $sortBy = "created_at"): WalletsList
+    public function list(): WalletsList
     {
-        if (!in_array($sortBy, ["created_at", "balance"])) {
-            throw new API_Exception('Value for param "sortBy" must either be "created_at" or "balance"');
-        }
-
-        $payload = [
-            "page" => $page,
-            "per_page" => $perPage,
-            "id" => $filterId,
-            "balance" => $filterBalance,
-            "sort_by" => $sortBy
-        ];
-
-        return new WalletsList($this->node->http()->get("/api/v1/wallets", $payload));
+        return new WalletsList($this->node->http()->get("/v2/wallets"));
     }
 
     /**
@@ -132,7 +115,6 @@ class Wallets
      * @param string $name
      * @param Mnemonic $mnemonic
      * @param string|null $password
-     * @param string $assuranceLevel
      * @param bool $hashPassword
      * @return Wallet
      * @throws API_Exception
@@ -140,16 +122,15 @@ class Wallets
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
-    public function create(string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $hashPassword = true): Wallet
+    public function create(string $name, Mnemonic $mnemonic, ?string $password = null, bool $hashPassword = true): Wallet
     {
-        return $this->createOrRestore("create", $name, $mnemonic, $password, $assuranceLevel, $hashPassword);
+        return $this->createOrRestore($name, $mnemonic, $password, $hashPassword);
     }
 
     /**
      * @param string $name
      * @param Mnemonic $mnemonic
      * @param string|null $password
-     * @param string $assuranceLevel
      * @param bool $hashPassword
      * @return Wallet
      * @throws API_Exception
@@ -157,30 +138,26 @@ class Wallets
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
-    public function restore(string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $hashPassword = true): Wallet
+    public function restore(string $name, Mnemonic $mnemonic, ?string $password = null, bool $hashPassword = true): Wallet
     {
-        return $this->createOrRestore("restore", $name, $mnemonic, $password, $assuranceLevel, $hashPassword);
+        return $this->createOrRestore($name, $mnemonic, $password, $hashPassword);
     }
 
     /**
-     * @param string $op
      * @param string $name
      * @param Mnemonic $mnemonic
-     * @param string|null $password
-     * @param string $assuranceLevel
+     * @param string|null $passphrase
      * @param bool $hashPassword
+     * @param int $addrPoolGap
      * @return Wallet
      * @throws API_Exception
      * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
+     * @noinspection PhpSameParameterValueInspection
      */
-    private function createOrRestore(string $op, string $name, Mnemonic $mnemonic, ?string $password = null, string $assuranceLevel = "normal", bool $hashPassword = true): Wallet
+    private function createOrRestore(string $name, Mnemonic $mnemonic, ?string $passphrase = null, bool $hashPassword = true, int $addrPoolGap = 20): Wallet
     {
-        if (!Validate::AssuranceLevel($assuranceLevel)) {
-            throw new API_Exception('Invalid assuranceLevel value');
-        }
-
         // Name
         $name = trim($name);
         if (!Validate::WalletName($name)) {
@@ -190,32 +167,30 @@ class Wallets
         // Mnemonic
         if (!$mnemonic->entropy) {
             throw new API_Exception('Mnemonic entropy not generated');
-        } elseif (!is_array($mnemonic->words) || count($mnemonic->words) !== 12) {
-            throw new API_Exception(sprintf('Mnemonic codes count must be precise 12, got %d', count($mnemonic->words)));
+        } elseif (!is_array($mnemonic->words) || count($mnemonic->words) < 15 || count($mnemonic->words) > 24) {
+            throw new API_Exception(sprintf('Mnemonic codes must be within 15-24, got %d', count($mnemonic->words)));
         }
 
         // Password
-        if ($password) {
-            $encodedPassword = $hashPassword ? hash("sha256", $password) : $password;
-            if (!Validate::Hash64($encodedPassword)) {
-                throw new API_Exception('spendingPassword must be 32 byte hexadecimal string (64 hexits)');
-            }
+        if ($passphrase) {
+            $passphrase = $hashPassword ? hash("sha256", $passphrase, false) : $passphrase;
+        }
+
+        // Address Pool Gap
+        if ($addrPoolGap < 10 || $addrPoolGap > 10000) {
+            throw new API_Exception('Invalid argument for address_pool_gap');
         }
 
         // Send query
         $payload = [
-            "assuranceLevel" => $assuranceLevel,
-            "backupPhrase" => $mnemonic->words,
             "name" => $name,
-            "operation" => $op
+            "mnemonic_sentence" => $mnemonic->words,
+            "passphrase" => $passphrase,
+            "address_pool_gap" => $addrPoolGap
         ];
 
-        if (isset($encodedPassword)) {
-            $payload["spendingPassword"] = $encodedPassword;
-        }
-
         // Create wallet
-        $res = $this->node->http()->post("/api/v1/wallets", $payload);
+        $res = $this->node->http()->post("/v2/wallets", $payload);
         $walletInfo = new WalletInfo($res);
         return new Wallet($this->node, $walletInfo->id, $walletInfo, $mnemonic);
     }

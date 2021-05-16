@@ -15,7 +15,7 @@ class Validate
      */
     public static function WalletIdentifier($id): bool
     {
-        if (is_string($id) && preg_match('/^[a-zA-Z0-9]{8,128}$/', $id)) {
+        if (is_string($id) && preg_match('/^[a-f0-9]{40}$/i', $id)) {
             return true;
         }
 
@@ -45,12 +45,12 @@ class Validate
     }
 
     /**
-     * @param $level
+     * @param $in
      * @return bool
      */
-    public static function AssuranceLevel($level): bool
+    public static function PolicyId($in): bool
     {
-        return is_string($level) && in_array($level, ["normal", "strict"]);
+        return is_string($in) && preg_match('/^[a-f0-9]{64}$/i', $in);
     }
 
     /**

@@ -5,7 +5,6 @@ namespace FurqanSiddiqui\Cardano\Response;
 
 use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
 use FurqanSiddiqui\Cardano\Http\HttpJSONResponse;
-use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta\Pagination;
 
 /**
  * Class WalletsList
@@ -19,8 +18,6 @@ class WalletsList implements \Iterator, \Countable, ResponseModelInterface
     private int $count = 0;
     /** @var array */
     private array $wallets = [];
-    /** @var Pagination */
-    private Pagination $pagination;
 
     /**
      * WalletsList constructor.
@@ -31,13 +28,7 @@ class WalletsList implements \Iterator, \Countable, ResponseModelInterface
      */
     public function __construct(HttpJSONResponse $res)
     {
-        $this->pagination = $res->meta->pagination;
-
-        $wallets = $res->payload["data"] ?? null;
-        if (!is_array($wallets)) {
-            throw API_ResponseException::RequirePropMissing("walletsList");
-        }
-
+        $wallets = $res->data();
         foreach ($wallets as $wallet) {
             $this->wallets[] = new WalletInfo($wallet);
             $this->count++;
@@ -58,14 +49,6 @@ class WalletsList implements \Iterator, \Countable, ResponseModelInterface
     public function array(): array
     {
         return $this->wallets;
-    }
-
-    /**
-     * @return HttpJSONResponse\Meta\Pagination
-     */
-    public function pagination(): HttpJSONResponse\Meta\Pagination
-    {
-        return $this->pagination;
     }
 
     /**

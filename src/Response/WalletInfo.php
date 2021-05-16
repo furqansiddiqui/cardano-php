@@ -13,24 +13,25 @@ use FurqanSiddiqui\Cardano\Validate;
  */
 class WalletInfo implements ResponseModelInterface
 {
-    /** @var string */
-    public string $assuranceLevel;
-    /** @var LovelaceAmount */
-    public LovelaceAmount $balance;
-    /** @var string */
-    public string $createdAt;
-    /** @var bool|null */
-    public ?bool $hasSpendingPassword = null;
+
     /** @var string */
     public string $id;
+    /** @var int */
+    public int $addressPoolGap;
+    /** @var WalletBalance */
+    public WalletBalance $balance;
+    /** @var WalletAssets */
+    public WalletAssets $assets;
     /** @var string|null */
     public ?string $name = null;
-    /** @var string|null */
-    public ?string $spendingPasswordLastUpdate = null;
-    /** @var WalletSyncState */
-    public WalletSyncState $syncState;
-    /** @var string */
-    public string $type;
+    /** @var array|null */
+    public ?array $delegation = null;
+    /** @var array|null */
+    public ?array $tip = null;
+    /** @var array|null */
+    public ?array $state = null;
+    /** @var bool */
+    public bool $stateReady = false;
 
     /**
      * WalletInfo constructor.
@@ -42,39 +43,68 @@ class WalletInfo implements ResponseModelInterface
     public function __construct($data)
     {
         if ($data instanceof HttpJSONResponse) {
-            $data = $data->payload["data"] ?? null;
+            $data = $data->data();
         }
 
         if (!is_array($data) || !$data) {
             throw API_ResponseException::RequirePropMissing("data");
         }
 
-        $walletId = $data["id"];
-        if (!Validate::WalletIdentifier($walletId)) {
+        $this->id = strval($data["id"]);
+        if (!Validate::WalletIdentifier($this->id)) {
             throw API_ResponseException::InvalidPropValue("wallet.id");
         }
 
-        $this->id = $walletId;
+        $this->addressPoolGap = intval($data["address_pool_gap"]);
 
-        $assuranceLevel = $data["assuranceLevel"];
-        if (!Validate::AssuranceLevel($assuranceLevel)) {
-            throw API_ResponseException::InvalidPropValue("wallet.assuranceLevel");
+        // Balances
+        $this->balance = new WalletBalance();
+        $avB = $data["balance"]["available"]["quantity"] ?? null;
+        if (is_int($avB)) {
+            $this->balance->available = new LovelaceAmount($avB);
         }
 
-        $this->assuranceLevel = $assuranceLevel;
-        $this->balance = new LovelaceAmount($data["balance"] ?? null, "wallet.Balance");
-        $this->createdAt = $data["createdAt"];
-        $this->hasSpendingPassword = array_key_exists("hasSpendingPassword", $data) && is_bool($data["hasSpendingPassword"]) ?
-            $data["hasSpendingPassword"] : null;
+        $avR = $data["balance"]["reward"]["quantity"] ?? null;
+        if (is_int($avR)) {
+            $this->balance->reward = new LovelaceAmount($avR);
+        }
+
+        $avT = $data["balance"]["total"]["quantity"] ?? null;
+        if (is_int($avT)) {
+            $this->balance->total = new LovelaceAmount($avT);
+        }
+
+        // Assets
+        $this->assets = new WalletAssets();
+        foreach (["available", "total"] as $assetI) {
+            $assetsList = $data["assets"][$assetI] ?? null;
+            if (is_array($assetsList) && $assetsList) {
+                $i = -1;
+                foreach ($assetsList as $asset) {
+                    $i++;
+                    try {
+                        array_push($this->assets->$assetI, AssetHolding::fromResponse($asset));
+                    } catch (API_ResponseException $e) {
+                        throw new API_ResponseException('Assets.available.%d; %s', $i, $e->getMessage());
+                    }
+                }
+            }
+        }
+
+        // More props
         $this->name = $data["name"] ?? null;
-        $this->spendingPasswordLastUpdate = $data["spendingPasswordLastUpdate"] ?? null;
-        $this->type = strval($data["type"]);
-
-        $syncState = $data["syncState"] ?? null;
-        if (!is_array($syncState) || !$syncState) {
-            throw API_ResponseException::RequirePropMissing("wallet.syncState");
+        if (isset($data["delegation"]) && is_array($data["delegation"])) {
+            $this->delegation = $data["delegation"];
         }
 
-        $this->syncState = WalletSyncState::Construct($syncState);
+        if (isset($data["state"]) && is_array($data["state"])) {
+            $this->state = $data["state"];
+        }
+
+        $this->stateReady = isset($this->state["status"]) && $this->state["status"] === "ready";
+
+        if (isset($data["tip"]) && is_array($data["tip"])) {
+            $this->tip = $data["tip"];
+        }
     }
 }

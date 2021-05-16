@@ -29,8 +29,6 @@ class Wallet
     private ?WalletInfo $info = null;
     /** @var null|Mnemonic */
     private ?Mnemonic $mnemonic = null;
-    /** @var null|Accounts */
-    private ?Accounts $accounts = null;
     /** @var null|string */
     private ?string $spendingPassword = null;
 
@@ -122,7 +120,6 @@ class Wallet
     }
 
     /**
-     * @param string $assuranceLevel
      * @param string $walletName
      * @return WalletInfo
      * @throws API_ResponseException
@@ -130,24 +127,19 @@ class Wallet
      * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
-    public function update(string $assuranceLevel, string $walletName): WalletInfo
+    public function update(string $walletName): WalletInfo
     {
         $this->isWalletDeleted();
-
-        if (!Validate::AssuranceLevel($assuranceLevel)) {
-            throw API_ResponseException::InvalidPropValue("assuranceLevel");
-        }
 
         if (!Validate::WalletName($walletName)) {
             throw API_ResponseException::InvalidPropValue("walletName");
         }
 
         $payload = [
-            "assuranceLevel" => $assuranceLevel,
             "name" => $walletName
         ];
 
-        $update = $this->node->http()->put(sprintf('/api/v1/wallets/%s', $this->id), $payload);
+        $update = $this->node->http()->put(sprintf('/v2/wallets/%s', $this->id), $payload);
         $this->info = new WalletInfo($update);
         return $this->info;
     }
@@ -155,25 +147,23 @@ class Wallet
     /**
      * @throws WalletException
      */
-    public function delete(): void
+    public function delete(): bool
     {
         $this->isWalletDeleted();
 
-        $this->node->http()->delete(sprintf('/api/v1/wallets/%s', $this->id));
-        $this->_isDeleted = true;
+        $req = $this->node->http()->delete(sprintf('/v2/wallets/%s', $this->id), null, false);
+        $this->_isDeleted = $req->httpCode === 204;
+        return $this->_isDeleted;
     }
 
     /**
      * @param string $newPassword
      * @param string $oldPassword
      * @param bool $hashPasswords
-     * @return WalletInfo
-     * @throws API_ResponseException
+     * @return bool
      * @throws WalletException
-     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
-     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
-    public function changePassword(string $newPassword, string $oldPassword, bool $hashPasswords = true): WalletInfo
+    public function changePassword(string $newPassword, string $oldPassword, bool $hashPasswords = true): bool
     {
         $this->isWalletDeleted();
 
@@ -194,13 +184,12 @@ class Wallet
         }
 
         $payload = [
-            "new" => $encodedNewPassword,
-            "old" => $encodedOldPassword
+            "new_passphrase" => $encodedNewPassword,
+            "old_passphrase" => $encodedOldPassword
         ];
 
-        $req = $this->node->http()->put(sprintf('/api/v1/wallets/%s/password', $this->id), $payload);
-        $this->info = new WalletInfo($req);
-        return $this->info;
+        $req = $this->node->http()->put(sprintf('/v2/wallets/%s/passphrase', $this->id), $payload, false);
+        return $req->httpCode === 204;
     }
 
     /**
@@ -210,22 +199,6 @@ class Wallet
     public function mnemonic(): ?Mnemonic
     {
         return $this->mnemonic;
-    }
-
-    /**
-     * @return Accounts
-     * @throws WalletException
-     */
-    public function accounts(): Accounts
-    {
-        $this->isWalletDeleted();
-
-        if ($this->accounts) {
-            return $this->accounts;
-        }
-
-        $this->accounts = new Accounts($this->node, $this);
-        return $this->accounts;
     }
 
     /**
@@ -263,20 +236,6 @@ class Wallet
         return new TransactionsList($res);
     }
 
-    /**
-     * @param int $accountIndex
-     * @return Account
-     * @throws API_ResponseException
-     * @throws WalletException
-     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
-     * @throws \FurqanSiddiqui\Cardano\Exception\AccountException
-     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
-     */
-    public function account(int $accountIndex): Account
-    {
-        $this->isWalletDeleted();
-        return $this->accounts()->get($accountIndex);
-    }
 
     /**
      * @param string $password
