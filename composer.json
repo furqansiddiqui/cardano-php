@@ -1,7 +1,7 @@
 {
   "name": "furqansiddiqui/cardano-php",
   "type": "library",
-  "description": "Cardano-SL (ADA) PHP SDK",
+  "description": "Cardano (ADA) PHP SDK",
   "keywords": [
     "cardano",
     "cardano-sl",
@@ -10,14 +10,14 @@
   ],
   "license": "MIT",
   "require": {
-    "php": ">=7.4.0",
+    "php": "^7.4.0",
     "ext-bcmath": "*",
-    "furqansiddiqui/http-client": "*",
-    "furqansiddiqui/bip39-mnemonic-php": "0.1.1"
+    "furqansiddiqui/http-client": "0.4.5",
+    "furqansiddiqui/bip39-mnemonic-php": "0.1.4"
   },
   "autoload": {
     "psr-4": {
-      "CardanoSL\\": [
+      "FurqanSiddiqui\\Cardano\\": [
         "src"
       ]
     }
