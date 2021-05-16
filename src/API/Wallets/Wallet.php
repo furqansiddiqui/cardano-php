@@ -64,7 +64,7 @@ class Wallet
      */
     public function __debugInfo()
     {
-        return [sprintf('Cardano SL wallet "%s" API instance', $this->id)];
+        return [sprintf('Cardano wallet "%s" API instance', $this->id)];
     }
 
     /**

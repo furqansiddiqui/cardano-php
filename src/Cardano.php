@@ -5,11 +5,11 @@ namespace FurqanSiddiqui\Cardano;
 
 use FurqanSiddiqui\Cardano\API\Wallets;
 use FurqanSiddiqui\Cardano\Exception\AddressException;
+use FurqanSiddiqui\Cardano\Exception\API_Exception;
 use FurqanSiddiqui\Cardano\Http\AbstractHttpClient;
 use FurqanSiddiqui\Cardano\Http\CardanoHttpAPI;
 use FurqanSiddiqui\Cardano\Response\AddressesList;
 use FurqanSiddiqui\Cardano\Response\AddressInfo;
-use FurqanSiddiqui\Cardano\Response\NodeInfo;
 
 /**
  * Class Cardano
@@ -54,7 +54,7 @@ class Cardano
      */
     public function __debugInfo()
     {
-        return [sprintf('Cardano SL node "%s"', $this->host)];
+        return [sprintf('Cardano node "%s"', $this->host)];
     }
 
     /**
@@ -109,7 +109,7 @@ class Cardano
         ];
 
         $res = $this->httpClient->get('/api/v1/addresses', $payload);
-        return new AddressesList($res->payload["data"] ?? null, $res->meta->pagination);
+        return new AddressesList($res->payload["data"] ?? null);
     }
 
     /**
@@ -122,7 +122,7 @@ class Cardano
     public function addressInfo(string $address): AddressInfo
     {
         if (!Validate::Address($address)) {
-            throw new AddressException('Invalid Cardano SL address');
+            throw new AddressException('Invalid Cardano address');
         }
 
         $res = $this->httpClient->get(sprintf('/api/v1/addresses/%s', $address));
@@ -130,12 +130,17 @@ class Cardano
     }
 
     /**
-     * @return NodeInfo
-     * @throws Exception\API_ResponseException
+     * @return array
+     * @throws API_Exception
      */
-    public function nodeInfo(): NodeInfo
+    public function nodeInfo(): array
     {
-        $res = $this->httpClient->get("/api/v1/node-info");
-        return new NodeInfo($res);
+        $res = $this->httpClient->get("/v2/network/information");
+        $nodeInfo = $res->data();
+        if (!is_array($nodeInfo)) {
+            throw new API_Exception(sprintf('Expected network information as Array, got "%s"', gettype($nodeInfo)));
+        }
+
+        return $nodeInfo;
     }
 }
