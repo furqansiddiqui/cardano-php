@@ -43,7 +43,7 @@ class Validate
      */
     public static function WalletName($name): bool
     {
-        return is_string($name) && preg_match('/^[\w\s\.\-]{3,32}$/', $name) ? true : false;
+        return is_string($name) && preg_match('/^[\w\s.\-]{3,32}$/', $name);
     }
 
     /**
@@ -52,7 +52,7 @@ class Validate
      */
     public static function AssuranceLevel($level): bool
     {
-        return is_string($level) && in_array($level, ["normal", "strict"]) ? true : false;
+        return is_string($level) && in_array($level, ["normal", "strict"]);
     }
 
     /**
@@ -61,7 +61,7 @@ class Validate
      */
     public static function SyncStateTag($tag): bool
     {
-        return is_string($tag) && in_array($tag, ["restoring", "synced"]) ? true : false;
+        return is_string($tag) && in_array($tag, ["restoring", "synced"]);
     }
 
     /**
@@ -70,7 +70,7 @@ class Validate
      */
     public static function AddressOwnership($ownership): bool
     {
-        return is_string($ownership) && in_array($ownership, ["isOurs", "ambiguousOwnership"]) ? true : false;
+        return is_string($ownership) && in_array($ownership, ["isOurs", "ambiguousOwnership"]);
     }
 
     /**
@@ -94,7 +94,7 @@ class Validate
      */
     public static function AccountName($name): bool
     {
-        return is_string($name) && preg_match('/^[\w\s\.\-\:]{1,32}$/', $name) ? true : false;
+        return is_string($name) && preg_match('/^[\w\s.\-:]{1,32}$/', $name);
     }
 
     /**
@@ -120,10 +120,11 @@ class Validate
         $decimalSign = $maxScale ? '{1,' . $maxScale . '}' : '+';
         $pattern = '[0-9]+(\.[0-9]' . $decimalSign . ')?';
         if ($signed) {
+            /** @noinspection RegExpRedundantEscape */
             $pattern = '\-?' . $pattern;
         }
 
-        return preg_match('/^' . $pattern . '$/', $amount) ? true : false;
+        return preg_match('/^' . $pattern . '$/', $amount);
     }
 
     /**
@@ -132,6 +133,6 @@ class Validate
      */
     public static function Hash64($hash): bool
     {
-        return is_string($hash) && preg_match('/^[a-f0-9]{64}$/i', $hash) ? true : false;
+        return is_string($hash) && preg_match('/^[a-f0-9]{64}$/i', $hash);
     }
 }
