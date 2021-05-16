@@ -7,6 +7,6 @@ namespace FurqanSiddiqui\Cardano\Exception;
  * Class TransactionException
  * @package FurqanSiddiqui\Cardano\Exception
  */
-class TransactionException extends AccountException
+class TransactionException extends CardanoException
 {
 }

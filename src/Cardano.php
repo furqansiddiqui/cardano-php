@@ -4,12 +4,9 @@ declare(strict_types=1);
 namespace FurqanSiddiqui\Cardano;
 
 use FurqanSiddiqui\Cardano\API\Wallets;
-use FurqanSiddiqui\Cardano\Exception\AddressException;
 use FurqanSiddiqui\Cardano\Exception\API_Exception;
 use FurqanSiddiqui\Cardano\Http\AbstractHttpClient;
 use FurqanSiddiqui\Cardano\Http\CardanoHttpAPI;
-use FurqanSiddiqui\Cardano\Response\AddressesList;
-use FurqanSiddiqui\Cardano\Response\AddressInfo;
 
 /**
  * Class Cardano
@@ -92,41 +89,6 @@ class Cardano
 
         $this->_api_Wallets = new Wallets($this);
         return $this->_api_Wallets;
-    }
-
-    /**
-     * @param int $page
-     * @param int $perPage
-     * @return AddressesList
-     * @throws Exception\API_Exception
-     * @throws Exception\API_ResponseException
-     */
-    public function addresses(int $page = 1, int $perPage = 10): AddressesList
-    {
-        $payload = [
-            "page" => $page,
-            "per_page" => $perPage
-        ];
-
-        $res = $this->httpClient->get('/api/v1/addresses', $payload);
-        return new AddressesList($res->payload["data"] ?? null);
-    }
-
-    /**
-     * @param string $address
-     * @return AddressInfo
-     * @throws AddressException
-     * @throws Exception\API_Exception
-     * @throws Exception\API_ResponseException
-     */
-    public function addressInfo(string $address): AddressInfo
-    {
-        if (!Validate::Address($address)) {
-            throw new AddressException('Invalid Cardano address');
-        }
-
-        $res = $this->httpClient->get(sprintf('/api/v1/addresses/%s', $address));
-        return new AddressInfo($res);
     }
 
     /**

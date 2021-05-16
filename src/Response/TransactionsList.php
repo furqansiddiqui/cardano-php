@@ -5,7 +5,6 @@ namespace FurqanSiddiqui\Cardano\Response;
 
 use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
 use FurqanSiddiqui\Cardano\Http\HttpJSONResponse;
-use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta\Pagination;
 
 /**
  * Class TransactionsList
@@ -19,8 +18,6 @@ class TransactionsList implements \Iterator, \Countable, ResponseModelInterface
     private int $count = 0;
     /** @var array */
     private array $txs = [];
-    /** @var Pagination */
-    private Pagination $pagination;
 
     /**
      * TransactionsList constructor.
@@ -31,8 +28,6 @@ class TransactionsList implements \Iterator, \Countable, ResponseModelInterface
      */
     public function __construct(HttpJSONResponse $res)
     {
-        $this->pagination = $res->meta->pagination;
-
         $transactions = $res->payload["data"] ?? null;
         if (!is_array($transactions)) {
             throw API_ResponseException::RequirePropMissing("transactionsList");
@@ -66,14 +61,6 @@ class TransactionsList implements \Iterator, \Countable, ResponseModelInterface
     public function array(): array
     {
         return $this->txs;
-    }
-
-    /**
-     * @return HttpJSONResponse\Meta\Pagination
-     */
-    public function pagination(): HttpJSONResponse\Meta\Pagination
-    {
-        return $this->pagination;
     }
 
     /**
