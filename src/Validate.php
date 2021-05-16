@@ -5,7 +5,7 @@ namespace FurqanSiddiqui\Cardano;
 
 /**
  * Class Validate
- * @package CardanoSL
+ * @package FurqanSiddiqui\Cardano
  */
 class Validate
 {

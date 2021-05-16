@@ -8,7 +8,7 @@ use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta;
 
 /**
  * Class HttpJSONResponse
- * @package CardanoSL\Http
+ * @package FurqanSiddiqui\Cardano\Http
  */
 class HttpJSONResponse
 {

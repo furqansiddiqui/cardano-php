@@ -8,7 +8,7 @@ use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class TxInOut
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class TxInOut
 {

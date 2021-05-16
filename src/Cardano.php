@@ -32,7 +32,7 @@ class Cardano
     private ?Wallets $_api_Wallets = null;
 
     /**
-     * CardanoSL constructor.
+     * Cardano constructor.
      * @param string $host
      * @param int $port
      * @param AbstractHttpClient|null $httpClient

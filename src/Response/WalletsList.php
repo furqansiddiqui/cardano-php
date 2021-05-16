@@ -9,7 +9,7 @@ use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta\Pagination;
 
 /**
  * Class WalletsList
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class WalletsList implements \Iterator, \Countable, ResponseModelInterface
 {

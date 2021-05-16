@@ -12,7 +12,7 @@ use FurqanSiddiqui\Cardano\Validate;
 
 /**
  * Class Accounts
- * @package CardanoSL\API\Wallets
+ * @package FurqanSiddiqui\Cardano\API\Wallets
  */
 class Accounts
 {

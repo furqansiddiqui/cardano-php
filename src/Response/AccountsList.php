@@ -9,7 +9,7 @@ use FurqanSiddiqui\Cardano\Http\HttpJSONResponse\Meta\Pagination;
 
 /**
  * Class AccountsList
- * @package CardanoSL\Response
+ * @package FurqanSiddiqui\Cardano\Response
  */
 class AccountsList implements \Iterator, \Countable, ResponseModelInterface
 {
