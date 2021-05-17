@@ -13,7 +13,7 @@
     "php": "^7.4.0",
     "ext-bcmath": "*",
     "furqansiddiqui/http-client": "0.4.5",
-    "furqansiddiqui/bip39-mnemonic-php": "0.1.4"
+    "furqansiddiqui/bip39-mnemonic-php": "0.1.2"
   },
   "autoload": {
     "psr-4": {
