@@ -59,18 +59,18 @@ class WalletInfo implements ResponseModelInterface
 
         // Balances
         $this->balance = new WalletBalance();
-        $avB = $data["balance"]["available"]["quantity"] ?? null;
-        if (is_int($avB)) {
+        $avB = $data["balance"]["available"] ?? null;
+        if (is_array($avB)) {
             $this->balance->available = new LovelaceAmount($avB);
         }
 
-        $avR = $data["balance"]["reward"]["quantity"] ?? null;
-        if (is_int($avR)) {
+        $avR = $data["balance"]["reward"] ?? null;
+        if (is_array($avR)) {
             $this->balance->reward = new LovelaceAmount($avR);
         }
 
-        $avT = $data["balance"]["total"]["quantity"] ?? null;
-        if (is_int($avT)) {
+        $avT = $data["balance"]["total"] ?? null;
+        if (is_array($avT)) {
             $this->balance->total = new LovelaceAmount($avT);
         }
 

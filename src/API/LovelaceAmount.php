@@ -15,12 +15,12 @@ class LovelaceAmount extends \FurqanSiddiqui\Cardano\Response\LovelaceAmount
 {
     /**
      * LovelaceAmount constructor.
-     * @param int $amount
+     * @param int $lovelace
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
-    public function __construct(int $amount = 0)
+    public function __construct(int $lovelace = 0)
     {
-        parent::__construct($amount);
+        parent::__construct(["unit" => "lovelace", "quantity" => $lovelace]);
     }
 
     /**

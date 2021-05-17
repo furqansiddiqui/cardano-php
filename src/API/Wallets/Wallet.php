@@ -211,40 +211,40 @@ class Wallet
     }
 
     /**
-     * @param int $page
-     * @param int $perPage
-     * @param string|null $idFilter
-     * @param string|null $createdAtFilter
-     * @param string|null $sortBy
+     * @param string|null $start
+     * @param string|null $end
+     * @param string|null $order
+     * @param int|null $minWithdrawal
      * @return TransactionsList
      * @throws API_ResponseException
      * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      */
-    public function transactions(int $page = 1, int $perPage = 10, ?string $idFilter = null, ?string $createdAtFilter = null, ?string $sortBy = null): TransactionsList
+    public function getTransactions(?string $start = null, ?string $end = null, ?string $order = null, ?int $minWithdrawal = null): TransactionsList
     {
-        $payload = [
-            "wallet_id" => $this->id,
-            "page" => $page,
-            "per_page" => $perPage
-        ];
-
-        if ($idFilter) {
-            $payload["id"] = $idFilter;
+        $payload = [];
+        if ($start) {
+            $payload["start"] = $start;
+            if ($end) {
+                $payload["end"] = $end;
+            }
         }
 
-        if ($createdAtFilter) {
-            $payload["created_at"] = $createdAtFilter;
+        if ($order) {
+            if (!in_array($order, ["ascending", "descending"])) {
+                throw new \InvalidArgumentException('Invalid value for order argument; Enum "ascending" or "descending" accepted');
+            }
+
+            $payload["order"] = $order;
         }
 
-        if ($sortBy) {
-            $payload["sort_by"] = $sortBy;
+        if (is_int($minWithdrawal) && $minWithdrawal >= 1) {
+            $payload["minWithdrawal"] = $minWithdrawal;
         }
 
-        $res = $this->node->http()->get('/api/v1/transactions', $payload);
+        $res = $this->node->http()->get(sprintf('/v2/wallets/%s/transactions', $this->id), $payload);
         return new TransactionsList($res);
     }
-
 
     /**
      * @param string $password

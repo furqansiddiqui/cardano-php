@@ -19,23 +19,32 @@ class LovelaceAmount implements ResponseModelInterface
 
     /**
      * LovelaceAmount constructor.
-     * @param null $lovelaceAmount
+     * @param $data
      * @param string|null $which
      * @throws AmountException
      */
-    public function __construct($lovelaceAmount = null, ?string $which = null)
+    public function __construct($data, ?string $which = null)
     {
         if ($which) {
             $which = sprintf('"%s" ', $which);
         }
 
-        if (!is_int($lovelaceAmount)) {
+        if (!is_array($data)) {
+            throw new AmountException($which . 'Invalid amount object');
+        }
+
+        if ($data["unit"] !== "lovelace") {
+            throw new AmountException($which . 'Amount object unit not lovelace, got "' . $data["unit"] . '"');
+        }
+
+        $quantity = $data["quantity"];
+        if (!is_int($quantity)) {
             throw new AmountException($which . 'Lovelace amount must be an integer');
-        } elseif ($lovelaceAmount > Cardano::MAX_LOVELACE) {
+        } elseif ($quantity > Cardano::MAX_LOVELACE) {
             throw new AmountException($which . sprintf('Lovelace amount cannot exceed %d', Cardano::MAX_LOVELACE));
         }
 
-        $this->lovelace = $lovelaceAmount;
+        $this->lovelace = $quantity;
         $this->ada = (string)bcdiv(strval($this->lovelace), bcpow("10", strval(Cardano::SCALE), 0), Cardano::SCALE);
     }
 }

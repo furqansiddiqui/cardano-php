@@ -50,7 +50,7 @@ class Validate
      */
     public static function PolicyId($in): bool
     {
-        return is_string($in) && preg_match('/^[a-f0-9]{64}$/i', $in);
+        return is_string($in) && preg_match('/^[a-f0-9]{32,128}$/i', $in);
     }
 
     /**

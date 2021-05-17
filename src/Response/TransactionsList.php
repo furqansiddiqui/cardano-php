@@ -28,9 +28,9 @@ class TransactionsList implements \Iterator, \Countable, ResponseModelInterface
      */
     public function __construct(HttpJSONResponse $res)
     {
-        $transactions = $res->payload["data"] ?? null;
+        $transactions = $res->data();
         if (!is_array($transactions)) {
-            throw API_ResponseException::RequirePropMissing("transactionsList");
+            throw new API_ResponseException(sprintf('TransactionsList expected Array got "%s"', gettype($transactions)));
         }
 
         foreach ($transactions as $transaction) {
