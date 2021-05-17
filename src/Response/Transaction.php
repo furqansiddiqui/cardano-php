@@ -53,7 +53,7 @@ class Transaction implements ResponseModelInterface
     public function __construct($data)
     {
         if ($data instanceof HttpJSONResponse) {
-            $data = $data->payload["data"];
+            $data = $data->data();
         }
 
         if (!is_array($data) || !$data) {

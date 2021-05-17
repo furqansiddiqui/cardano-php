@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace FurqanSiddiqui\Cardano\API\Wallets;
 
 use FurqanSiddiqui\BIP39\Mnemonic;
+use FurqanSiddiqui\Cardano\API\RawTransaction;
 use FurqanSiddiqui\Cardano\Cardano;
 use FurqanSiddiqui\Cardano\Exception\API_ResponseException;
 use FurqanSiddiqui\Cardano\Exception\WalletException;
+use FurqanSiddiqui\Cardano\Response\Transaction;
 use FurqanSiddiqui\Cardano\Response\TransactionsList;
 use FurqanSiddiqui\Cardano\Response\WalletInfo;
 use FurqanSiddiqui\Cardano\Validate;
@@ -247,6 +249,23 @@ class Wallet
     }
 
     /**
+     * @param string $txId
+     * @return Transaction
+     * @throws API_ResponseException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
+     */
+    public function getTransaction(string $txId): Transaction
+    {
+        if (!preg_match('/^[a-f0-9]{64}$/i', $txId)) {
+            throw new \InvalidArgumentException('Invalid transaction ID/hash');
+        }
+
+        $res = $this->node->http()->get(sprintf('/v2/wallets/%s/transactions/%s', $this->id, $txId));
+        return new Transaction($res);
+    }
+
+    /**
      * @param string $password
      * @param bool $hashPassword
      * @return Wallet
@@ -263,6 +282,35 @@ class Wallet
 
         $this->spendingPassword = $encodedPassword;
         return $this;
+    }
+
+    /**
+     * @param RawTransaction $tx
+     * @return Transaction
+     * @throws API_ResponseException
+     * @throws WalletException
+     * @throws \FurqanSiddiqui\Cardano\Exception\API_Exception
+     * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
+     */
+    public function sendTx(RawTransaction $tx): Transaction
+    {
+        $this->isWalletDeleted();
+
+        if (!$this->spendingPassword) {
+            throw new WalletException('Wallet spending passphrase is not set');
+        }
+
+        $outputs = $tx->getOutputs();
+        if (!$outputs) {
+            throw new WalletException('Cannot send empty transaction; No outputs defined');
+        }
+
+        $res = $this->node->http()->post(sprintf('/v2/wallets/%s/transactions', $this->id), [
+            "passphrase" => $this->spendingPassword,
+            "payments" => $outputs
+        ]);
+
+        return new Transaction($res);
     }
 
     /**

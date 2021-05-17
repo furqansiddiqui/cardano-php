@@ -10,15 +10,11 @@ use FurqanSiddiqui\Cardano\Validate;
 /**
  * Class RawTransaction
  * @package FurqanSiddiqui\Cardano\API
- * @property-read array $payees
- * @property-read string|null $groupingPolicy
  */
 class RawTransaction
 {
     /** @var array */
     private array $payees = [];
-    /** @var string|null */
-    private ?string $groupingPolicy = null;
 
     /**
      * RawTransaction constructor.
@@ -30,51 +26,90 @@ class RawTransaction
     /**
      * @param string $address
      * @param LovelaceAmount $amount
-     * @return RawTransaction
+     * @return $this
      * @throws TransactionException
      */
-    public function dest(string $address, LovelaceAmount $amount): self
+    public function nativeTransfer(string $address, LovelaceAmount $amount): self
     {
         if (!Validate::Address($address)) {
             throw new TransactionException('Invalid destination/payee address');
         }
 
-        $this->payees[] = [
-            "address" => $address,
-            "amount" => $amount->lovelace
+        if (!isset($this->payees[$address])) {
+            $this->payees[$address] = [];
+        }
+
+        $this->payees[$address]["native"] = $amount->lovelace;
+        return $this;
+    }
+
+    /**
+     * @param string $address
+     * @param string $assetPolicyId
+     * @param string $assetName
+     * @param int $quantity
+     * @return $this
+     * @throws TransactionException
+     */
+    public function assetTransfer(string $address, string $assetPolicyId, string $assetName, int $quantity): self
+    {
+        if (!Validate::Address($address)) {
+            throw new TransactionException('Invalid destination/payee address');
+        }
+
+        if (!isset($this->payees[$address])) {
+            $this->payees[$address] = [];
+        }
+
+        if (!Validate::PolicyId($assetPolicyId)) {
+            throw new TransactionException('Invalid asset policy identifier');
+        }
+
+        if (!preg_match('/^[a-f0-9]+$/i', $assetName)) {
+            throw new TransactionException('Invalid asset name must be hex encoded');
+        }
+
+        if (!isset($this->payees[$address]["assets"])) {
+            $this->payees[$address]["assets"] = [];
+        }
+
+        $this->payees[$address]["assets"][$assetPolicyId] = [
+            "name" => $assetName,
+            "quantity" => $quantity
         ];
 
         return $this;
     }
 
     /**
-     * @param string $prop
-     * @return mixed
+     * @return array
      */
-    public function __get(string $prop)
+    public function getOutputs(): array
     {
-        switch ($prop) {
-            case "payees":
-            case "groupingPolicy":
-                return $this->$prop;
+        $outputs = [];
+        foreach ($this->payees as $address => $transfers) {
+            $output = [];
+            $output["address"] = $address;
+            $nativeTransfer = $transfers["native"] ?? 0;
+            $output["amount"] = [
+                "quantity" => $nativeTransfer,
+                "unit" => "lovelace"
+            ];
+
+            if (isset($transfers["assets"]) && $transfers["assets"]) {
+                foreach ($transfers["assets"] as $policyId => $assetTransfer) {
+                    $output["assets"] = [];
+                    $output["assets"][] = [
+                        "policy_id" => $policyId,
+                        "asset_name" => $assetTransfer["name"],
+                        "quantity" => $assetTransfer["quantity"]
+                    ];
+                }
+            }
+
+            $outputs[] = $output;
         }
 
-        throw new \DomainException('Cannot get value of inaccessible property');
-    }
-
-    /**
-     * @param string $policy
-     * @return RawTransaction
-     * @throws TransactionException
-     */
-    public function groupingPolicy(string $policy): self
-    {
-        if (!in_array($policy, ["OptimizeForSecurity", "OptimizeForHighThroughput"])) {
-            throw new TransactionException('Invalid transaction grouping policy');
-        }
-
-        $this->groupingPolicy = $policy;
-
-        return $this;
+        return $outputs;
     }
 }
