@@ -116,15 +116,16 @@ class Wallets
      * @param Mnemonic $mnemonic
      * @param string|null $password
      * @param bool $hashPassword
+     * @param int $addrPoolGap
      * @return Wallet
      * @throws API_Exception
      * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
-    public function create(string $name, Mnemonic $mnemonic, ?string $password = null, bool $hashPassword = true): Wallet
+    public function create(string $name, Mnemonic $mnemonic, ?string $password = null, bool $hashPassword = true, int $addrPoolGap = 20): Wallet
     {
-        return $this->createOrRestore($name, $mnemonic, $password, $hashPassword);
+        return $this->createOrRestore($name, $mnemonic, $password, $hashPassword, $addrPoolGap);
     }
 
     /**
@@ -132,15 +133,16 @@ class Wallets
      * @param Mnemonic $mnemonic
      * @param string|null $password
      * @param bool $hashPassword
+     * @param int $addrPoolGap
      * @return Wallet
      * @throws API_Exception
      * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
      */
-    public function restore(string $name, Mnemonic $mnemonic, ?string $password = null, bool $hashPassword = true): Wallet
+    public function restore(string $name, Mnemonic $mnemonic, ?string $password = null, bool $hashPassword = true, int $addrPoolGap = 20): Wallet
     {
-        return $this->createOrRestore($name, $mnemonic, $password, $hashPassword);
+        return $this->createOrRestore($name, $mnemonic, $password, $hashPassword, $addrPoolGap);
     }
 
     /**
@@ -154,7 +156,6 @@ class Wallets
      * @throws \FurqanSiddiqui\Cardano\Exception\API_ResponseException
      * @throws \FurqanSiddiqui\Cardano\Exception\AmountException
      * @throws \FurqanSiddiqui\Cardano\Exception\WalletException
-     * @noinspection PhpSameParameterValueInspection
      */
     private function createOrRestore(string $name, Mnemonic $mnemonic, ?string $passphrase = null, bool $hashPassword = true, int $addrPoolGap = 20): Wallet
     {

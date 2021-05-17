@@ -114,9 +114,18 @@ class Wallet
         }
 
         // Get wallet info
-        $walletInfo = $this->node->http()->get(sprintf('/api/v1/wallets/%s', $this->id));
+        $walletInfo = $this->node->http()->get(sprintf('/v2/wallets/%s', $this->id));
         $this->info = new WalletInfo($walletInfo);
         return $this->info;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllAddresses(): array
+    {
+        $addresses = $this->node->http()->get(sprintf('/v2/wallets/%s/addresses', $this->id));
+        return $addresses->data();
     }
 
     /**

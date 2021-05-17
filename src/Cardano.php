@@ -92,6 +92,21 @@ class Cardano
     }
 
     /**
+     * @param string $addr
+     * @return array
+     * @throws API_Exception
+     */
+    public function getAddress(string $addr): array
+    {
+        if (!Validate::Address($addr)) {
+            throw new API_Exception('Invalid address in argument for getAddress');
+        }
+
+        $req = $this->http()->get("/v2/addresses/" . $addr);
+        return $req->data();
+    }
+
+    /**
      * @return array
      * @throws API_Exception
      */
