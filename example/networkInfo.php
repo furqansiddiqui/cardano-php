@@ -6,3 +6,4 @@ require "../vendor/autoload.php";
 
 $cardano = new \FurqanSiddiqui\Cardano\Cardano("localhost", 8090);
 var_dump($cardano->nodeInfo());
+
