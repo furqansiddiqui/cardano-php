@@ -114,7 +114,7 @@ class Validate
             $pattern = '\-?' . $pattern;
         }
 
-        return preg_match('/^' . $pattern . '$/', $amount);
+        return (bool)preg_match('/^' . $pattern . '$/', $amount);
     }
 
     /**
