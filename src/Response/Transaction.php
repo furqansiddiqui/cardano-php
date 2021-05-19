@@ -39,6 +39,8 @@ class Transaction implements ResponseModelInterface
     public array $inputs;
     /** @var array */
     public array $outputs;
+    /** @var int */
+    public int $epoch;
     /** @var array */
     private array $_raw;
 
@@ -101,16 +103,20 @@ class Transaction implements ResponseModelInterface
         }
 
         // Timeline
+        $this->epoch = 0;
         if (isset($data["inserted_at"]) && is_array($data["inserted_at"])) {
             $this->insertedAt = $data["inserted_at"];
+            $this->epoch = strtotime($this->insertedAt["time"]);
         }
 
         if (isset($data["expires_at"]) && is_array($data["expires_at"])) {
             $this->expiresAt = $data["expires_at"];
+            $this->epoch = strtotime($this->expiresAt["time"]);
         }
 
         if (isset($data["pending_since"]) && is_array($data["pending_since"])) {
             $this->pendingSince = $data["pending_since"];
+            $this->epoch = strtotime($this->pendingSince["time"]);
         }
 
         // Depth
