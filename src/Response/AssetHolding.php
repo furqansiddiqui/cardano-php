@@ -36,7 +36,7 @@ class AssetHolding
         }
 
         $assetName = $data["asset_name"];
-        if (!is_string($assetName) || !$assetName) {
+        if (!is_string($assetName)) {
             throw new API_ResponseException('Invalid asset name');
         }
 
